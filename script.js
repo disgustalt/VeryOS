@@ -9,8 +9,13 @@ function windowListener(id) {
 
   targ.onmousedown = holdWin;
   targ.addEventListener('touchstart', holdWin, { passive: false });
+
+  const winclose = el.querySelector(":scope .nav .ctrls .close");
+  winclose.addEventListener("click", winClose);
   
   function holdWin(e) {
+    if (e.target.closest(".ctrls")) return;
+    
     const cordx = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
     const cordy = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
     pos3 = cordx;
@@ -46,5 +51,9 @@ function windowListener(id) {
     document.removeEventListener("touchend", stopWinDrag);
     document.removeEventListener("touchmove", winDrag);
   }
-}
 
+  function winClose(e) {
+    e.preventDefault();
+    el.remove();
+  }
+}
