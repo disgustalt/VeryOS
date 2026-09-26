@@ -20,7 +20,7 @@ function windowListener(id) {
       document.onmousemove = winDrag;
     } else {
       document.addEventListener("touchend", stopWinDrag);
-      document.addEventListener("touchmobe", winDrag, { passive: false });
+      document.addEventListener("touchmove", winDrag, { passive: false });
     }
   }
 
