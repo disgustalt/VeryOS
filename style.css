@@ -60,6 +60,7 @@ body::before {
 }
 
 .window {
+  touch-action: none; 
   width: 450px;
   height: 200px;
   background-color: rgba(0, 0, 0, 0.8);
