@@ -69,6 +69,32 @@ body::before {
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    .icon {
+      width: 20px;
+      height: 100%;
+      line-height: 0;
+      font-weight: bold;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      align-self: stretch;
+      font-size: 12px;
+      margin-left: 4px;
+    }
+  
+    .name {
+      line-height: 0;
+      font-weight: bold;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      align-self: stretch;
+      font-size: 12px;
+      margin-left: 3px;
+    }
     
     .ctrls {
       align-self: stretch;
