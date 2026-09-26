@@ -60,7 +60,7 @@ body::before {
   overflow: hidden;
 
   .nav {
-    padding: 12px 16px;
+    padding: 0 7px;
     background: rgba(255, 255, 255, 0.1);
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
     cursor: grab;
@@ -69,10 +69,15 @@ body::before {
     align-items: center;
     
     .ctrls {
+      display: flex;
       gap: 7px;
       
       .close {
-        
+        width: 10%;
+        height: 100%;
+        background-color: rgba(255, 0, 0, 0.7);
+        color: white;
+        display: inline-block;
       }
     }
   }
