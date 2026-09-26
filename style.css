@@ -58,4 +58,22 @@ body::before {
   position: absolute;
   user-select: none;
   overflow: hidden;
+
+  .nav {
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    cursor: grab;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    
+    .ctrls {
+      gap: 7px;
+      
+      .close {
+        
+      }
+    }
+  }
 }
