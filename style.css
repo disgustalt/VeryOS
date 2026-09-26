@@ -30,4 +30,5 @@ body::before {
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border-radius: 9px;
+  margin: 8px;
 }
