@@ -1,19 +1,20 @@
 windowListener("win-test")
 
 function windowListener(id) {
-  const pos = { 1: 0, 2: 0, 3: 0, 4: 0 };
+  let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
   const el = document.getElementById(id);
-  
   if (!el) return;
 
   el.onmousedown = holdWin;
   el.addEventListener('touchstart', holdWin, { passive: false });
   
   function holdWin(e) {
-    e.preventDefault();
-    
-    pos[3] = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-    pos[4] = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+    const cordx = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+    const cordy = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+    pos3 = cordx;
+    pos4 = cordy;
+    pos1 = el.offsetTop;
+    pos2 = el.offsetLeft;
 
     if (e.type === "mousedown") {
       document.onmouseup = stopWinDrag;
@@ -27,19 +28,21 @@ function windowListener(id) {
   function winDrag(e) {
     e.preventDefault();
     
-    pos[1] = pos[3] - e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-    pos[2] = pos[4] - e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-    pos[3] = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-    pos[4] = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-    el.style.left = (el.offsetLeft - pos[1]) + "px";
-    el.style.top = (el.offsetTop - pos[2]) + "px";
+    const cordx = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
+    const cordy = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
+    
+    posx = cordx;
+    posy = cordy;
+    
+    el.style.left = pos2 + (posx - pos3) + "px";
+    el.style.top = pos1 + (posy - pos4) + "px";
   }
 
   function stopWinDrag(e) {
-    e.preventDefault();
     document.onmouseup = null;
     document.onmousemove = null;
     document.removeEventListener("touchend", stopWinDrag);
     document.removeEventListener("touchmove", winDrag);
   }
 }
+
