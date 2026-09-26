@@ -5,8 +5,10 @@ function windowListener(id) {
   const el = document.getElementById(id);
   if (!el) return;
 
-  el.onmousedown = holdWin;
-  el.addEventListener('touchstart', holdWin, { passive: false });
+  const targ = el.querySelector(".nav");
+
+  targ.onmousedown = holdWin;
+  targ.addEventListener('touchstart', holdWin, { passive: false });
   
   function holdWin(e) {
     const cordx = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
