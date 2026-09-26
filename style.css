@@ -16,7 +16,7 @@ body::before {
   position: fixed;
   filter: blur(5px) brightness(1.2) saturate(1.3) contrast(1.1);
   transform: scale(1.2);
-  background-image: url("./bg.svg");
+  background-image: url("./img/bg.svg");
   background-repeat: no-repeat;
   background-size: cover;
   background-attachment: fixed;
@@ -32,4 +32,11 @@ body::before {
   border-radius: 9px;
   margin: 8px;
   box-shadow: 0 8px 12px 0 rgba(0, 0, 0, 0.3);
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  .icon {
+    width: 95%;
+    height: 95%;
+  }
 }
