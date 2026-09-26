@@ -1,3 +1,7 @@
+document.apps = {
+  files: []
+}
+
 const apps = {
   files: {
     name: "File Manager",
@@ -101,6 +105,7 @@ function createWindow(id, appid) {
           </div>
           woa
         </div>
+        <script src="./scripts/apps/filemanager.js"
       `);
     break;
   }
