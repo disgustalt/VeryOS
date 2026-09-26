@@ -1,4 +1,9 @@
-windowListener("win-test")
+const apps = {
+  files: {
+    name: "File Manager",
+    icon: "./img/icons/filemanager.svg"
+  }
+}
 
 function windowListener(id) {
   let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
@@ -57,3 +62,50 @@ function windowListener(id) {
     el.remove();
   }
 }
+
+function appListener(app) {
+  const el = document.getElementById(`app-${app}`);
+
+  if (!el) return;
+
+  el.addEventListener("click", (e) => {
+    e.preventDefault();
+    const winid = `win-${app}-${Date.now()}`;
+    createWindow(winid, app);
+  });
+}
+
+function createWindow(id, appid) {
+  const app = apps[appid];
+
+  switch(appid) {
+    case "files":
+      document.body.insertAdjacentHTML("beforeend", `
+        <div class="window" id="${id}">
+          <div class="nav">
+            <img src="${app.icon}" class="icon">
+            <p class="name">
+              ${app.name}
+            </p>
+            <div class="ctrls">
+              <div class="min">
+                -
+              </div>
+              <div class="full">
+                &#9633
+              </div>
+              <div class="close">
+              ×
+              </div>
+            </div>
+          </div>
+          woa
+        </div>
+      `);
+    break;
+  }
+  windowListener(id);
+}
+
+appListener("files");
+
