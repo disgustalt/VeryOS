@@ -1,0 +1,13 @@
+const op = document.apps.files.push;
+
+document.apps.files.push = function(...p) {
+  op.apply(this, p);
+  
+  for (const id of p) {
+    if (typeof id === "string") filesWin(id);
+  }
+};
+
+function filesWin(id) {
+  
+}
