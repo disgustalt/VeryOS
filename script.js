@@ -84,7 +84,6 @@ function createWindow(id, appid) {
 
   switch(appid) {
     case "files":
-      document.apps[appid].push(id);
       document.body.insertAdjacentHTML("beforeend", `
         <div class="window" id="${id}">
           <div class="nav">
@@ -104,10 +103,12 @@ function createWindow(id, appid) {
               </div>
             </div>
           </div>
-          <div class="content" id="${id}-cont">
+          <div class="cont" id="${id}-cont">
           </div>
         </div>
       `);
+
+      document.apps.files.push(id);
       break;
   }
   windowListener(id);
