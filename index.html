@@ -13,6 +13,12 @@
       <p>Files</p>
     </div>
   </body>
+  <script type="module">
+    import { get, set, del} from 'https://cdn.jsdelivr.net/npm/idb-keyval@6/+esm';
+    window.db.add = set;
+    window.db.get = get;
+    window.db.del = del;
+  </script>
   <script src="./script.js"></script>
   <script src="./scripts/apps/filemanager.js"></script>
 </html>
