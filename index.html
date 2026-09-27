@@ -15,6 +15,7 @@
   </body>
   <script type="module">
     import { get, set, del} from 'https://cdn.jsdelivr.net/npm/idb-keyval@6/+esm';
+    window.db = {};
     window.db.add = set;
     window.db.get = get;
     window.db.del = del;
