@@ -179,7 +179,7 @@ body::before {
 
       li {
         list-style-type: none;
-        diplay: inline-block;
+        display: inline-block;
       }
     }
   }
