@@ -99,7 +99,7 @@ function createWindow(id, appid) {
                 &#9633
               </div>
               <div class="close">
-              ×
+                &times;
               </div>
             </div>
           </div>
