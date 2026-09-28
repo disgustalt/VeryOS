@@ -15,11 +15,11 @@ function filesWin(id) {
   
   for (const file of files) {
     if (file.name) {
-      fhtml += `<li>${file.name}`;
+      fhtml += `<li><img src="./img/icons/filemanager.svg"><p class="fname">${file.name}</p><p style="color: rgba(255, 255, 255, 0.3);padding: 0 7px;">-</p><p class="fsize">${file.size}</p></li>`;
     }
   }
   
   cont.innerHTML = `
-    ${fhtml ? "<ul>" + fhtml + "</ul" : "No files."}
+    ${fhtml ? "<ul>" + fhtml + "</ul>" : "No files."}
   `;
 }
