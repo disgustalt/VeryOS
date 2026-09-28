@@ -1,11 +1,15 @@
 document.apps = {
-  files: []
+  files: [],
+  camera: []
 }
 
 const apps = {
   files: {
     name: "File Manager",
     icon: "./img/icons/filemanager.svg"
+  },
+  camera: {
+    name: "Camera"
   }
 }
 
@@ -110,9 +114,38 @@ function createWindow(id, appid) {
 
       document.apps.files.push(id);
       break;
+
+    case "camera":
+      document.body.insertAdjacentHTML("beforeend", `
+        <div class="window" id="${id}">
+          <div class="nav">
+            <img src="${app.icon}" class="icon">
+            <p class="name">
+              ${app.name}
+            </p>
+            <div class="ctrls">
+              <div class="min">
+                -
+              </div>
+              <div class="full">
+                &#9633
+              </div>
+              <div class="close">
+                &times;
+              </div>
+            </div>
+          </div>
+          <div class="cont" id="${id}-cont">
+          </div>
+        </div>
+      `);
+
+      document.apps.camera.push(id);
+      break;
   }
   windowListener(id);
 }
 
 appListener("files");
+appListener("camera");
 
