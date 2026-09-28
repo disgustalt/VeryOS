@@ -178,7 +178,20 @@ body::before {
       list-style-type: none;
 
       li {
+        display: flex;
+        justify-content: center;
+        height: 20px;
         list-style-type: none;
+
+        img {
+          padding: 0 3px;
+          width: 18px;
+          height: 18px;
+        }
+
+        .fname {
+          font-size: 13px;
+        }
       }
     }
   }
