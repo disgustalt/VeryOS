@@ -71,8 +71,8 @@ apps {
       display: flex;
 
       img {
-        width: 85%;
-        height: 85%;
+        width: 90%;
+        height: 90%;
         object-fit: contain;
       }
     }
