@@ -1,12 +1,14 @@
 html, body {
   margin: 0;
   padding: 0;
-  min-height: 100vh;
+  min-width: 100%;
+  min-height: 100%;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
 body {
   position: relative;
+  overflow: auto;
   color: white;
 }
 
@@ -24,9 +26,17 @@ body::before {
   background-attachment: fixed;
 }
 
+desktop {
+  height: 1080px;
+  width: 1920px;
+  position: relative;
+  min-width: 1920px;
+  min-height: 1080px;
+}
+
 .appcont {
-  width: 6vh;
-  height: 8vh;
+  width: 45px;
+  height: 50px;
   margin: 8px;
   display: flex;
   flex-direction: column;
@@ -53,7 +63,7 @@ body::before {
 
   p {
     align-self: center;
-    font-size: 10px;
+    font-size: 20px;
     margin-top: 5px;
     font-weight: bold;
   }
@@ -75,6 +85,7 @@ body::before {
   position: absolute;
   user-select: none;
   overflow: hidden;
+  box-sizing: border-box;
 
   .nav {
     padding: 0;
@@ -170,7 +181,7 @@ body::before {
     height: 180px;
     overflow-x: auto;
     overflow-y: auto;
-    white-space: no-wrap;
+    white-space: nowrap;
 
     ul {
       margin: 0;
@@ -179,18 +190,29 @@ body::before {
 
       li {
         display: flex;
-        justify-content: center;
-        height: 20px;
+        align-items: center;
+        height: 24px;
+        min-width: max-content;
         list-style-type: none;
-
+        color: rgba(255, 255, 255, 0.7);
+        
         img {
-          padding: 0 3px;
+          display: inline-block;
+          padding: 0 5px;
           width: 18px;
           height: 18px;
         }
 
         .fname {
-          font-size: 13px;
+          display: inline-block;
+          font-size: 14px;
+        }
+
+        .fsize {
+          display: inline-block;
+          font-size: 12px;
+          font-weight: bold;
+          color: rgba(255, 255, 255, 0.5);
         }
       }
     }
