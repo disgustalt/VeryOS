@@ -33,7 +33,12 @@ async function camWin(id) {
     const videl = cont.querySelector(".camfeed");
     videl.srcObject = vid;
   } catch (e) {
-    if (perm.state !== "granted") return alert("Camera permission needed for camera app to work :(");
+    if (perm.state !== "granted") {
+      alert("Camera permission needed for camera app to work :(");
+      el.remove();
+      return;
+    }
+    
     alert("Hmm...something went wrong");
   }
 }
