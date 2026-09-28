@@ -4,7 +4,7 @@ document.apps.camera.push = function(...p) {
   op.apply(this, p);
   
   for (const id of p) {
-    if (typeof id === "string") filesWin(id);
+    if (typeof id === "string") camWin(id);
   }
 };
 
