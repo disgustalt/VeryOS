@@ -256,6 +256,7 @@ apps {
       }
 
       .camtake {
+        touch-action: none;
         position: absolute;
         bottom: 15px;
         left: 50%;
@@ -271,6 +272,7 @@ apps {
       }
 
       .camgall, .camface {
+        touch-action: none;
         position: absolute;
         top: 15px;
         width: 25px;
@@ -281,6 +283,12 @@ apps {
         background: rgba(255, 255, 255, 0.1);
         cursor: pointer;
         box-sizing: border-box;
+
+        img {
+          width: 22px;
+          height: 22px;
+          filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.9));
+        }
       }
 
       .camgall {
@@ -289,6 +297,15 @@ apps {
 
       .camface {
         left: 15px;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        img {
+          width: 18px;
+          height: 18px;
+        }
       }
     }
   }
