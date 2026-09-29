@@ -29,7 +29,7 @@ async function camWin(id) {
       }
     });
 
-    cont.innerHTML = `<cam><video autoplay playsinline class="camfeed"></video><button class="camtake"></button><button class="camgall"></button><button class="camface"></button></cam>`;
+    cont.innerHTML = `<cam><video autoplay playsinline class="camfeed"></video><button class="camtake"></button><button class="camgall"><img src="./img/icons/gallery.svg"></button><button class="camface"><img src="./img/icons/change.svg"></button></cam>`;
     const videl = cont.querySelector(".camfeed");
     videl.srcObject = vid;
   } catch (e) {
