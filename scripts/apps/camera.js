@@ -1,10 +1,10 @@
 const op = document.apps.camera.push;
 
-document.apps.camera.push = function(...p) {
+document.apps.camera.push = async function(...p) {
   op.apply(this, p);
   
   for (const id of p) {
-    if (typeof id === "string") camWin(id);
+    if (typeof id === "string") await camWin(id);
   }
 };
 
@@ -100,6 +100,7 @@ async function camWin(id) {
 
           oVid.getTracks().forEach(t => t.stop());
         } catch (e) {
+          alert("Something went wrong :(");
           console.log(e);
         }
       });
@@ -109,7 +110,7 @@ async function camWin(id) {
     const ind = document.apps["camera"].indexOf(id);
 
     if (ind !== -1) {
-      document.apps[camera].splice(ind, 1);
+      document.apps["camera"].splice(ind, 1);
     }  
     
     if (perm.state !== "granted") {
