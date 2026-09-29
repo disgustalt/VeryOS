@@ -9,11 +9,12 @@ const apps = {
     icon: "./img/icons/filemanager.svg"
   },
   camera: {
-    name: "Camera"
+    name: "Camera",
+    icon: "./img/icons/camera.svg"
   }
 }
 
-function windowListener(id) {
+function windowListener(id, appid) {
   let pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
   const el = document.getElementById(id);
   if (!el) return;
@@ -67,7 +68,13 @@ function windowListener(id) {
 
   function winClose(e) {
     e.preventDefault();
+    if (el._clVid) el._clVid();
     el.remove();
+    const ind = document.apps[appid].indexOf(id);
+
+    if (ind !== -1) {
+      document.apps[appid].splice(ind, 1);
+    }
   }
 }
 
@@ -143,7 +150,7 @@ function createWindow(id, appid) {
       document.apps.camera.push(id);
       break;
   }
-  windowListener(id);
+  windowListener(id, appid);
 }
 
 appListener("files");
