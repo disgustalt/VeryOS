@@ -29,7 +29,7 @@ async function camWin(id) {
       }
     });
 
-    cont.innerHTML = `<video autoplay playsinline class="camfeed"></video>`;
+    cont.innerHTML = `<cam><video autoplay playsinline class="camfeed"></video><button class="camtake"></button><button class="camgall"></button><button class="camface"></button></cam>`;
     const videl = cont.querySelector(".camfeed");
     videl.srcObject = vid;
   } catch (e) {
