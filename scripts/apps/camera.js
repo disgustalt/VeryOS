@@ -76,7 +76,7 @@ async function camWin(id) {
         if (!files) {  
           files = [{ id: imgid, name: imgn, mime: "image/jpeg", size: size + sizev }];  
         } else {  
-          files.push({ id: imgid, name: imgn, mime: "image/jpeg", size: size + sizev });  
+          files.push({ id: imgid, name: imgn, mime: "image/jpeg", size: size.toFixed(2) + sizev });  
         }  
         await window.db.add("files", files);  
       });
