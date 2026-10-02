@@ -8,9 +8,9 @@ document.apps.files.push = function(...p) {
   }
 };
 
-function filesWin(id) {
+async function filesWin(id) {
   const cont = document.getElementById(`${id}-cont`);
-  const files = [{ name: "fileee", size: 1999 }, { name: "anoyher file", size: 3824 }];
+  const files = await window.db.get("files");
   let fhtml = "";
   
   for (const file of files) {
