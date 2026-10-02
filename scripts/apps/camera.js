@@ -58,14 +58,25 @@ async function camWin(id) {
         const img = await new Promise(resolve => c.toBlob(resolve, "image/jpeg"));;
 
         const imgid = crypto.randomUUID();  
-        const imgn = `img-${new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date()).replace(/[^0-9]/g, '-')}.jpg`  
+        const imgn = `img-${new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date()).replace(/[^0-9]/g, '-')}.jpg`;
+        let size;
+        let sizev = "B";
+        
+        if (img.size > 1024) {
+          size = img.size / 1024;
+        }
+
+        if (size >= 1024) {
+          size = size / 1024;
+          sizev = "Mb";
+        }
 
         await window.db.add(`file:${imgid}`, img);  
         let files = await window.db.get("files");  
         if (!files) {  
-          files = [{ id: imgid, name: imgn, mime: "image/jpeg" }];  
+          files = [{ id: imgid, name: imgn, mime: "image/jpeg", size: size + sizev }];  
         } else {  
-          files.push({ id: imgid, name: imgn, mime: "image/jpeg" });  
+          files.push({ id: imgid, name: imgn, mime: "image/jpeg", size: size + sizev });  
         }  
         await window.db.add("files", files);  
       });
