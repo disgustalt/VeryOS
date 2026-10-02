@@ -57,14 +57,17 @@ async function camWin(id) {
 
         const img = await new Promise(resolve => c.toBlob(resolve, "image/jpeg"));;
 
-        const imgu = URL.createObjectURL(img);
-        const ael = document.createElement("a");
-        ael.href = imgu;
-        ael.download = "pic.jpg";
-        ael.click();
+        const imgid = crypto.randomUUID();  
+        const imgn = `img-${new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date()).replace(/[^0-9]/g, '-')}.jpg`  
 
-        URL.revokeObjectURL(imgu);
-        ael.remove();
+        await window.db.add(`file:${imgid}`, img);  
+        let files = await window.db.get("files");  
+        if (!files) {  
+          files = [{ id: imgid, name: imgn, mime: "image/jpeg" }];  
+        } else {  
+          files.push({ id: imgid, name: imgn, mime: "image/jpeg" });  
+        }  
+        await window.db.add("files", files);  
       });
     }
 
@@ -85,7 +88,10 @@ async function camWin(id) {
         e.preventDefault();
       
         const nFace = face ? "environment" : "user";
- 
+        const oVid = vid;
+        
+        oVid.getTracks().forEach(t => t.stop());
+        
         try {
           const nVid = await navigator.mediaDevices.getUserMedia({
             video: {
@@ -93,15 +99,28 @@ async function camWin(id) {
             }
           });
 
-          const oVid = vid;
           vid = nVid;
           videl.srcObject = vid;
           face = face ? 0 : 1;
-
-          oVid.getTracks().forEach(t => t.stop());
+          
+          if (videl.paused) {
+            videl.play().catch(() => {});
+          }
         } catch (e) {
           alert("Something went wrong :(");
           console.log(e);
+          
+          try {
+            const nvid2 = await navigator.mediaDevices.getUserMedia({
+              video: { facingMode: face ? "environment" : "user" }
+            });
+            vid = nvid2;
+            videl.srcObject = vid;
+            if (videl.paused) videl.play().catch(() => {});
+          } catch (e) {
+            console.log(e);
+            alert("Something went wrong ;)")
+          }
         }
       });
     }
