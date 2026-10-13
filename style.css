@@ -29,6 +29,27 @@ body::before {
   background-attachment: fixed;
 }
 
+navbar {
+  display: flex;
+  align-items: center;
+  height: 55px;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(35, 35, 35, 0.7);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  border-top: solid 1.5px rgba(230, 230, 230, 0.1);
+  z-index: 999999;
+
+  img {
+    margin-left: 10px;
+    width: 45px;
+    height: 45px;
+  }
+}
+
 desktop {
   height: 1080px;
   width: 1920px;
