@@ -1,3 +1,5 @@
+Note: the minimise/maximum buttons are **not** supposed to work. They're *currently* just decorations.
+
 # VeryOS
 A web OS that has a Camera and filesystem(ish)!
 
