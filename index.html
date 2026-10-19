@@ -11,6 +11,12 @@
   </head>
   <body>
     <desktop>
+      <div class="load">
+        <p class="txt" id="loadtxt">Loading :p</p>
+        <div class="loader">
+          <div class="bar" id="loadbar"></div>
+        </div>
+      </div>
       <apps>
         <div class="appcont" id="app-files">
           <div class="icon">
@@ -37,6 +43,7 @@
     window.db.get = get;
     window.db.del = del;
   </script>
+  <script type="module" src="./scripts/os.js"></script>
   <script src="./script.js"></script>
   <script type="module" src="./scripts/apps/filemanager.js"></script>
   <script type="module" src="./scripts/apps/camera.js"></script>
