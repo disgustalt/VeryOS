@@ -203,12 +203,12 @@ async function initOS() {
   if (os.err) return;
 
   try {
-    ltxt = "Starting OS..."
+    ltxt.textContent = "Starting OS..."
     os.bios.url = URL.createObjectURL(os.bios.instance);
     os.bios.vga.url = URL.createObjectURL(os.bios.vga.instance);
     os.wasm.url = URL.createObjectURL(os.wasm.instance);
   
-    os.instance = new window.V86({
+    os.instance = new V86({
       wasm_path: os.wasm.url,
       memory_size: 512 * 1024 * 1024,
       vga_memory_size: 8 * 1024 * 1024,
