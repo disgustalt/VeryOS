@@ -9,7 +9,7 @@ const os = {
   fs: {
     instance: null,
     size: 128,
-    url: "https://api.disgustalt.qzz.io/veryos/file/alpine.ext4"
+    url: "https://api.disgustalt.qzz.io/veryos/file/alpine2.ext4"
   },
   bios: {
     url: null,
@@ -31,7 +31,7 @@ async function initOS() {
   if (os.ready) return;
 
   try {
-    os.fs.instance = await window.db.get("osfs");
+    os.fs.instance = await window.db.get("osfs2");
     os.wasm.instance = await window.db.get("oswasm");
     os.bios.instance = await window.db.get("osbios");
     os.bios.vga.instance = await window.db.get("osvga");
@@ -71,7 +71,7 @@ async function initOS() {
       }
       const osfs = new Blob(ch);
       os.fs.instance = await osfs.arrayBuffer();
-      await window.db.set("osfs", os.fs.instance);
+      await window.db.set("osfs2", os.fs.instance);
       os.fs.size = Math.round( os.fs.instance.byteLength / 1048576 );
     } catch (osfse) {
       ltxt.style.color = "red";
