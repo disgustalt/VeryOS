@@ -23,25 +23,17 @@ async function terminalWin(id) {
   t.style.backgroundColor = "#000000";
   cont.appendChild(t);
 
-  const term = new Terminal({
-    cursorBlink: true,
-    convertEol: true,
-    disableStdin: false,
-    theme: { background: "#000000", foreground: "#ffffff", cursor: "#ffffff" }
-  });
-
-  term.open(t);
-  term.write("Please wait :)\n");
-
   let s;
   let dest = false;
+  
 
   function cl() {
     if (dest) return;
     
     el?.remove();
     dest = true;
-    term?.dispose();
+    term?.uninstallKeyboard();
+    term?.getPrefs()?.resetAll();
     s?.destroy();
     
     const ind = document.apps["terminal"].indexOf(id);
@@ -56,6 +48,9 @@ async function terminalWin(id) {
     cl();
   });
 
+  term.onTerminalReady = async () => {
+    const io = term.io.push();
+
   try {
     s = await window.os.createTerminal();
 
@@ -65,7 +60,7 @@ async function terminalWin(id) {
     }
 
     if (!s && !dest) {
-      term.write("Couldn't get a terminal session. Maybe there's none available :c\nThis window will autoclose in 3seconds...");
+      io.writeUTF8("\r\nCouldn't get a terminal session. Maybe there's none available :c\r\nThis window will autoclose in 3seconds...");
       setTimeout(() => {
         if (dest) return;
         cl();
@@ -73,12 +68,20 @@ async function terminalWin(id) {
       return;
     }
 
-    s.setOnOutput(c => { if (!dest) term.write(c) });
-    term.onData(d => { if (!dest) { term.write(d); s.write(d) }});
-    term.write("\r\nTerminal ready!\nWelcome to the VeryOS terminal :D\r\n");
+    iv.onVTKeystroke = (b) => {
+      if (!dest) s.write(str);
+    }
+
+    io.sendString = (b) => {
+      if (!dest) s.write(b);
+    }
+
+    s.setOnOutput(c => { if (!dest) io.writeUTF8(c) });
+    io.writeUTF8("\r\nTerminal ready!\r\nWelcome to the VeryOS terminal :D\r\n");
   } catch (e) {
     console.error(e);
     if (!dest && term ) term.write("\r\nSomething went wrong :(\r\n");
     else if (el.isConnected) alert("Something went wrong ;c");
+  }
   }
 }
