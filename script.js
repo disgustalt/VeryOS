@@ -160,7 +160,7 @@ function createWindow(id, appid) {
       document.apps.camera.push(id);
       break;
 
-      case "camera":
+      case "terminal":
       document.body.insertAdjacentHTML("beforeend", `
         <div class="window" id="${id}">
           <div class="nav">
