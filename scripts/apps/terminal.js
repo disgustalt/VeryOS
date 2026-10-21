@@ -1,3 +1,6 @@
+import { Terminal } from "https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/+esm";
+import "https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/css/xterm.css";
+
 const op = document.apps.terminal.push;
 
 document.apps.terminal.push = function(...p) {
