@@ -237,6 +237,9 @@ async function initOS() {
       serial2: {
         on_output: (b) => serialout(2, b)
       },
+      serial3: {
+        on_output: (b) => serialout(3, b)
+      }
     });
 
     os.instance.add_listener("emulator-ready", () => {
@@ -305,10 +308,10 @@ function serialout(port, byte) {
 async function createTerminal() {
   await osready();
   
-  let port = 1;
+  let port = 3;
   while (os.serialSessions[`serial${port}`]) {
-    port++;
-    if (port > 2) return null;
+    port--;
+    if (port < 2) return null;
   }
 
   const sid = `serial${port}`;
