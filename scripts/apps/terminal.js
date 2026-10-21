@@ -41,5 +41,10 @@ function terminalWin(id) {
     s.destroy();
     term.dispose();
     el.remove();
+    const ind = document.apps["terminal"].indexOf(id);
+
+    if (ind !== -1) {
+      document.apps["terminal"].splice(ind, 1);
+    }
   });
 }
