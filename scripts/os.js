@@ -89,7 +89,7 @@ async function initOS() {
   if (!os.wasm.instance) {
     ltxt.textContent = "Loading v86 wasm file...";
     try {
-      const res = await fetch("https://copy.sh/v86/build/v86.wasm");
+      const res = await fetch("https://api.disgustalt.qzz.io/veryos/file/v86.wasm");
       if (!res.ok) {
         ltxt.style.color = "red";
         ltxt.textContent = "Failed to load v86 wasm file, please try again later :(";
@@ -130,7 +130,7 @@ async function initOS() {
   if (!os.bios.instance) {
     ltxt.textContent = "Loading bios...";
     try {
-      const res = await fetch("https://copy.sh/v86/bios/seabios.bin");
+      const res = await fetch("https://api.disgustalt.qzz.io/veryos/file/seabios.bin");
       if (!res.ok) {
         ltxt.style.color = "red";
         ltxt.textContent = "Failed to load bios, please try again later :(";
@@ -171,7 +171,7 @@ async function initOS() {
   if (!os.bios.vga.instance) {
     ltxt.textContent = "Loading vga bios...";
     try {
-      const res = await fetch("https://copy.sh/v86/bios/vgabios.bin");
+      const res = await fetch("https://api.disgustalt.qzz.io/veryos/file/vgabios.bin");
       if (!res.ok) {
         ltxt.style.color = "red";
         ltxt.textContent = "Failed to load vga bios, please try again later :(";
