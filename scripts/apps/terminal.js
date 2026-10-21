@@ -25,7 +25,13 @@ async function terminalWin(id) {
 
   let s;
   let dest = false;
-  
+
+  lib.init(() => {
+    const term = new hterm.Terminal();
+    term.getPrefs()?.set("background-color", "#000000");
+    term?.getPrefs()?.set("foreground-color", "#ffffff");
+    term.getPrefs()?.set("cursor-color", "#ffffff");
+    term.decorate(t);
 
   function cl() {
     if (dest) return;
@@ -84,4 +90,5 @@ async function terminalWin(id) {
     else if (el.isConnected) alert("Something went wrong ;c");
   }
   }
+  });
 }
