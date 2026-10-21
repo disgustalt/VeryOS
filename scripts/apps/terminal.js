@@ -25,6 +25,8 @@ async function terminalWin(id) {
 
   const term = new Terminal({
     cursorBlink: true,
+    convertEol: true,
+    disableStdin: false,
     theme: { background: "#000000", foreground: "#ffffff", cursor: "#ffffff" }
   });
 
