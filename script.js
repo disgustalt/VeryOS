@@ -165,5 +165,5 @@ function createWindow(id, appid) {
 
 appListener("files");
 appListener("camera");
-aapListener("terminal")
+appListener("terminal")
 
