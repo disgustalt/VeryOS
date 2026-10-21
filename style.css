@@ -89,7 +89,7 @@ desktop {
 
       .bar {
         height: 100%;
-        width: 73%;
+        width: 0%;
         background-color: rgba(86, 0, 224, 0.9);
         transition: width 0.3s ease;
         border-radius: 10px;
