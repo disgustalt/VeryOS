@@ -26,8 +26,8 @@ async function terminalWin(id) {
   let s;
   let dest = false;
 
-  lib.init(() => {
-    const term = new hterm.Terminal();
+  window.lib.init(() => {
+    const term = new window.hterm.Terminal();
     term.getPrefs().set("background-color", "#000000");
     term.getPrefs().set("foreground-color", "#ffffff");
     term.getPrefs().set("cursor-color", "#ffffff");
