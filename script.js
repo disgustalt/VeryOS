@@ -32,7 +32,7 @@ function windowListener(id, appid) {
   targ.onmousedown = holdWin;
   targ.addEventListener('touchstart', holdWin, { passive: false });
 
-  if (!apps[appid].other.noclose) {
+  if (!apps[appid].other?.noclose) {
     const winclose = el.querySelector(":scope .nav .ctrls .close");
     winclose.addEventListener("click", winClose);
   }
