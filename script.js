@@ -159,11 +159,39 @@ function createWindow(id, appid) {
 
       document.apps.camera.push(id);
       break;
+
+      case "camera":
+      document.body.insertAdjacentHTML("beforeend", `
+        <div class="window" id="${id}">
+          <div class="nav">
+            <img src="${app.icon}" class="icon">
+            <p class="name">
+              ${app.name}
+            </p>
+            <div class="ctrls">
+              <div class="min">
+                -
+              </div>
+              <div class="full">
+                &#9633
+              </div>
+              <div class="close">
+                &times;
+              </div>
+            </div>
+          </div>
+          <div class="cont" id="${id}-cont">
+          </div>
+        </div>
+      `);
+
+      document.apps.terminal.push(id);
+      break;
   }
   windowListener(id, appid);
 }
 
 appListener("files");
 appListener("camera");
-appListener("terminal")
+appListener("terminal");
 
