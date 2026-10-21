@@ -186,7 +186,7 @@ async function initOS() {
         const tmb = (tsize / 1048576).toFixed(1);
         const cmb = (rsize / 1048576).toFixed(1);
         ltxt.textContent = `Downloading vga bios... (${cmb}MB/${tmb}MB)`;
-        lbar.style.width = Math.round((rsize / tsize) * 20 + 40) + "%";
+        lbar.style.width = Math.round((rsize / tsize) * 20 + 60) + "%";
       }
 
       const osvga = new Blob(ch);
