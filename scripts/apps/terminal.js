@@ -28,9 +28,9 @@ async function terminalWin(id) {
 
   lib.init(() => {
     const term = new hterm.Terminal();
-    term.getPrefs()?.set("background-color", "#000000");
-    term?.getPrefs()?.set("foreground-color", "#ffffff");
-    term.getPrefs()?.set("cursor-color", "#ffffff");
+    term.getPrefs().set("background-color", "#000000");
+    term.getPrefs().set("foreground-color", "#ffffff");
+    term.getPrefs().set("cursor-color", "#ffffff");
     term.decorate(t);
 
   function cl() {
@@ -39,7 +39,7 @@ async function terminalWin(id) {
     el?.remove();
     dest = true;
     term?.uninstallKeyboard();
-    term?.getPrefs()?.resetAll();
+    term.getPrefs().resetAll();
     s?.destroy();
     
     const ind = document.apps["terminal"].indexOf(id);
@@ -74,19 +74,19 @@ async function terminalWin(id) {
       return;
     }
 
-    iv.onVTKeystroke = (b) => {
-      if (!dest) s.write(str);
-    }
+    io.onVTKeystroke = (b) => {
+      if (!dest) s.write(b);
+    };
 
     io.sendString = (b) => {
       if (!dest) s.write(b);
-    }
+    };
 
     s.setOnOutput(c => { if (!dest) io.writeUTF8(c) });
     io.writeUTF8("\r\nTerminal ready!\r\nWelcome to the VeryOS terminal :D\r\n");
   } catch (e) {
     console.error(e);
-    if (!dest && term ) term.write("\r\nSomething went wrong :(\r\n");
+    if (!dest && term ) io.writeUTF8("\r\nSomething went wrong :(\r\n");
     else if (el.isConnected) alert("Something went wrong ;c");
   }
   }
