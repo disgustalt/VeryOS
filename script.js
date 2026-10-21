@@ -1,6 +1,7 @@
 document.apps = {
   files: [],
-  camera: []
+  camera: [],
+  terminal: []
 }
 
 const apps = {
@@ -11,6 +12,13 @@ const apps = {
   camera: {
     name: "Camera",
     icon: "./img/icons/camera.svg"
+  },
+  terminal: {
+    name: "Terminal",
+    icon: "./img/icons/terminal.svg",
+    other: {
+      noclose: true
+    }
   }
 }
 
@@ -24,8 +32,10 @@ function windowListener(id, appid) {
   targ.onmousedown = holdWin;
   targ.addEventListener('touchstart', holdWin, { passive: false });
 
-  const winclose = el.querySelector(":scope .nav .ctrls .close");
-  winclose.addEventListener("click", winClose);
+  if (!apps[appid].other.noclose) {
+    const winclose = el.querySelector(":scope .nav .ctrls .close");
+    winclose.addEventListener("click", winClose);
+  }
   
   function holdWin(e) {
     if (e.target.closest(".ctrls")) return;
