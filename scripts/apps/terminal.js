@@ -65,7 +65,7 @@ async function terminalWin(id) {
     }
 
     if (!s && !dest) {
-      term.write("Coudn't get a terminal session. Maybe there's none available :c\nThis window will autoclose in 3seconds...");
+      term.write("Couldn't get a terminal session. Maybe there's none available :c\nThis window will autoclose in 3seconds...");
       setTimeout(() => {
         if (dest) return;
         cl();
@@ -74,7 +74,7 @@ async function terminalWin(id) {
     }
 
     s.setOnOutput(c => { if (!dest) term.write(c) });
-    term.onData(d => { if (!dest) s.write(d) });
+    term.onData(d => { if (!dest) { term.write(d); s.write(d) }});
     term.write("\r\nTerminal ready!\nWelcome to the VeryOS terminal :D\r\n");
   } catch (e) {
     console.error(e);
