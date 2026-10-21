@@ -30,10 +30,17 @@ async function initOS() {
   ltxt.textContent = "Starting...";
   if (os.ready) return;
 
-  os.fs.instance = await window.db.get("osfs");
-  os.wasm.instance = await window.db.get("oswasm");
-  os.bios.instance = await window.db.get("osbios");
-  os.bios.vga.instance = await window.db.get("osvga");
+  try {
+    os.fs.instance = await window.db.get("osfs");
+    os.wasm.instance = await window.db.get("oswasm");
+    os.bios.instance = await window.db.get("osbios");
+    os.bios.vga.instance = await window.db.get("osvga");
+  } catch (dbre) {
+    os.err = true;
+    ltxt.style.color = "red";
+    ltxt.textContent = "Failed to read db :(";
+    return;
+  }
     
   if (!os.fs.instance) {
     ltxt.innerText = "Loading filesystem...";
@@ -204,9 +211,9 @@ async function initOS() {
 
   try {
     ltxt.textContent = "Starting OS..."
-    os.bios.url = URL.createObjectURL(os.bios.instance);
-    os.bios.vga.url = URL.createObjectURL(os.bios.vga.instance);
-    os.wasm.url = URL.createObjectURL(os.wasm.instance);
+    os.bios.url = URL.createObjectURL(new Blob([os.bios.instance]));
+    os.bios.vga.url = URL.createObjectURL(new Blob([os.bios.vga.instance]));
+    os.wasm.url = URL.createObjectURL(new Blob([os.wasm.instance], { type: "application/wasm" }));
   
     os.instance = new V86({
       wasm_path: os.wasm.url,
@@ -244,7 +251,9 @@ async function initOS() {
         
         setInterval(async () => {
           if (os.instance) {
-            await window.db.set("osfs", os.fs.instance);
+            try {
+              await window.db.set("osfs", os.fs.instance);
+            } catch {}
           }
         }, 10000);
       } catch (fsse) {
@@ -256,6 +265,7 @@ async function initOS() {
     ltxt.textContent = "Couldn't start the OS, please try again later :((";
     console.log(ose);
     os.ready = false;
+    os.err = true
   }
 }
 
@@ -284,8 +294,11 @@ async function fsexpand(fssize = 256) {
 
 function serialout(port, byte) {
   const sid = `serial${port}`;
+  
   if (os.serialSessions[sid]) {
-    os.serialSessions[sid].onOutput(String.fromCharCode(byte));
+    if (typeof os.serialSessions[sid]?.onOutput === "function") {
+      os.serialSessions[sid].onOutput(String.fromCharCode(byte));
+    }
   }
 }
 
@@ -315,9 +328,18 @@ async function createTerminal() {
 }
 
 function osready() {
-  return new Promise(resolve => {
-    if (os.ready) resolve();
-    else setTimeout(() => osready().then(resolve), 100);
+  return new Promise((resolve, reject) => {
+    function osr() {
+      if (os.ready) {
+        resolve();
+      } else if (os.err) {
+        reject(new Error("kaboom (failed)"));
+      } else {
+        setTimeout(osr, 100);
+      }
+    }
+
+    osr();
   });
 }
 
@@ -329,7 +351,12 @@ window.os = {
   createTerminal
 };
 
-initOS().then(() => {
+initOS().catch(inite => {
+  os.err = true;
+  os.ready = false;
+  ltxt.textContent = "Initializing faiked :c";
+  ltxt.style.color = "red";
+}).finally(() => {
   window.os.instance = os.instance; 
   window.os.ready = os.ready;
 });
