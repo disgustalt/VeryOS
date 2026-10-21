@@ -11,7 +11,7 @@
   </head>
   <body>
     <desktop>
-      <div class="load">
+      <div class="load" id="mainloader">
         <p class="txt" id="loadtxt">Loading :p</p>
         <div class="loader">
           <div class="bar" id="loadbar"></div>
@@ -43,6 +43,7 @@
     window.db.get = get;
     window.db.del = del;
   </script>
+  <script src="https://copy.sh/v86/build/libv86.js"></script>
   <script type="module" src="./scripts/os.js"></script>
   <script src="./script.js"></script>
   <script type="module" src="./scripts/apps/filemanager.js"></script>
