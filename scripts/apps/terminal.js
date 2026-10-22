@@ -1,5 +1,7 @@
-import { WTerm } from "https://esm.sh/@wterm/dom?bundle";
-
+const scr = document.getElementById("osscreen");
+const par = scr?.parentElement;
+const nxt = scr?.nextSibling;
+let win = false;
 const op = document.apps.terminal.push;
 
 document.apps.terminal.push = function(...p) {
@@ -15,17 +17,25 @@ document.apps.terminal.push = function(...p) {
 async function terminalWin(id) {
   const el = document.getElementById(id);
   const cont = document.getElementById(`${id}-cont`);
-  if (!cont || !el) return;
+  if (!cont || !el || !scr) return;
+  
+  if (win) {
+    if (cont || el) el?.remove();
+    return alert("Only one terminal is allowed at a time :)");
+  }
 
-  const t = document.createElement("div");
-  t.style.width = "100%";
-  t.style.height = "100%";
-  t.style.backgroundColor = "#000000";
-  t.style.color = "#ffffff";
-  cont.appendChild(t);
+  win = true;
 
-  let term;
-  let s;
+  scr?.hideen = false;
+  scr?.style?.display = "block";
+  scr?.style?.width = "100%";
+  scr?.style?.height = "100%";
+  
+  cont.appendChild(scr);
+
+  scr.tabIndex = 0;
+  scr?.focus();
+
   let dest = false;
 
   function cl() {
@@ -33,8 +43,17 @@ async function terminalWin(id) {
     
     el?.remove();
     dest = true;
-    term?.destroy();
-    s?.destroy();
+    win = false;
+    if (par) {
+      if (nxt?.parentNode === par) {
+        par?.insertBefore(scr, nxt);
+      } else {
+        par?.appendChild(scr);
+      }
+    }
+
+    scr?.style.display = "none";
+    scr?.hidden = true;
     
     const ind = document.apps["terminal"].indexOf(id);
 
@@ -47,40 +66,4 @@ async function terminalWin(id) {
   close?.addEventListener("click", () => {
     cl();
   });
-
-  try {
-    term = new WTerm(t, {
-      autoResize: true,
-      cursorBlinl: true,
-      onData(d) {
-        if (!dest && s) s?.write(d);
-      }
-    });
-
-    await term.init();
-
-    if (dest) {
-      term?.destroy();
-      return;
-    }
-
-    s = await window.os.createTerminal();
-
-    if (!s && !dest) {
-      term.write("\r\nCouldn't get a terminal session. Maybe there's none available :c\r\nThis window will autoclose in 3seconds...");
-      setTimeout(() => {
-        if (dest) return;
-        cl();
-      }, 3000);
-      return;
-    }
-
-    s.setOnOutput(c => { if (!dest) term.write(c) });
-    term.focus();
-    term.write("\r\nTerminal ready!\r\nWelcome to the VeryOS terminal :D\r\n");
-  } catch (e) {
-    console.error(e);
-    if (!dest && term ) term.write("\r\nSomething went wrong :(\r\n");
-    else if (el.isConnected) alert("Something went wrong ;c");
-  }
 }
