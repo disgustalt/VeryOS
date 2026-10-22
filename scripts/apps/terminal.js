@@ -1,4 +1,5 @@
 const scr = document.getElementById("osscreen");
+console.log(s);
 const par = scr?.parentElement;
 const nxt = scr?.nextSibling;
 let win = false;
@@ -15,55 +16,63 @@ document.apps.terminal.push = function(...p) {
 };
 
 async function terminalWin(id) {
-  const el = document.getElementById(id);
-  const cont = document.getElementById(`${id}-cont`);
-  if (!cont || !el || !scr) return;
+  try {
+    const el = document.getElementById(id);
+    const cont = document.getElementById(`${id}-cont`);
+    if (!cont || !el || !scr) return;
   
-  if (win) {
-    if (cont || el) el?.remove();
-    return alert("Only one terminal is allowed at a time :)");
-  }
+    if (win) {
+      if (cont || el) el?.remove();
+      return alert("Only one terminal is allowed at a time :)");
+    }
 
-  win = true;
-
-  scr?.hideen = false;
-  scr?.style?.display = "block";
-  scr?.style?.width = "100%";
-  scr?.style?.height = "100%";
+    win = true;
   
-  cont.appendChild(scr);
+    cont.appendChild(scr);
 
-  scr.tabIndex = 0;
-  scr?.focus();
+    scr?.hideen = false;
+    scr?.style?.display = "block";
+    scr?.style?.width = "100%";
+    scr?.style?.height = "100%";
+    scr?.querySelectorAll("canvas").forEach(canva => {
+      canva?.style.width = "100%";
+      canva?.style.height = "100%";
+    });
 
-  let dest = false;
+    scr.tabIndex = 0;
+    scr?.focus();
 
-  function cl() {
-    if (dest) return;
+    let dest = false;
+
+    function cl() {
+      if (dest) return;
+      
+      el?.remove();
+      dest = true;
+      win = false;
+      if (par) {
+        if (nxt?.parentNode === par) {
+          par?.insertBefore(scr, nxt);
+        } else {
+          par?.appendChild(scr);
+        }
+      }
+
+      scr?.style.display = "none";
+      scr?.hidden = true;
     
-    el?.remove();
-    dest = true;
-    win = false;
-    if (par) {
-      if (nxt?.parentNode === par) {
-        par?.insertBefore(scr, nxt);
-      } else {
-        par?.appendChild(scr);
+      const ind = document.apps["terminal"].indexOf(id);
+
+      if (ind !== -1) {
+        document.apps["terminal"].splice(ind, 1);
       }
     }
 
-    scr?.style.display = "none";
-    scr?.hidden = true;
-    
-    const ind = document.apps["terminal"].indexOf(id);
-
-    if (ind !== -1) {
-      document.apps["terminal"].splice(ind, 1);
-    }
+    const close = document.querySelector(`#${id} .nav .close`);
+    close?.addEventListener("click", () => {
+      cl();
+    });
+  } catch (e) {
+    console.error(e);
   }
-
-  const close = document.querySelector(`#${id} .nav .close`);
-  close?.addEventListener("click", () => {
-    cl();
-  });
 }
