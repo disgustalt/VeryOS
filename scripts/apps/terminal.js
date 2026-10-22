@@ -30,7 +30,7 @@ async function terminalWin(id) {
   
     cont.appendChild(scr);
 
-    scr?.hideen = false;
+    scr?.hidden = false;
     scr?.style?.display = "block";
     scr?.style?.width = "100%";
     scr?.style?.height = "100%";
