@@ -19,6 +19,14 @@ const os = {
       instance: null
     }
   },
+  initrd: {
+    instance: null,
+    url: null
+  },
+  kernel: {
+    instance: null,
+    url: null
+  },
   serialSessions: {}
 };
 
@@ -28,6 +36,7 @@ const lmain = document.getElementById("mainloader");
 
 async function initOS() {
   ltxt.textContent = "Starting...";
+
   if (os.ready) return;
 
   try {
@@ -35,17 +44,22 @@ async function initOS() {
     os.wasm.instance = await window.db.get("oswasm");
     os.bios.instance = await window.db.get("osbios");
     os.bios.vga.instance = await window.db.get("osvga");
+    os.initrd.instance = await window.db.get("osinitrd");
+    os.kernel.instance = await window.db.get("oskernel");
   } catch (dbre) {
     os.err = true;
     ltxt.style.color = "red";
     ltxt.textContent = "Failed to read db :(";
+    console.error(dbre);
     return;
   }
-    
+
   if (!os.fs.instance) {
-    ltxt.innerText = "Loading filesystem...";
+    ltxt.textContent = "Loading filesystem...";
+
     try {
       const res = await fetch(os.fs.url);
+
       if (!res.ok) {
         ltxt.style.color = "red";
         ltxt.textContent = "Failed to load filesystem, please try again later :(";
@@ -64,32 +78,95 @@ async function initOS() {
 
         ch.push(value);
         rsize += value.byteLength;
+
         const cmb = (rsize / 1048576).toFixed(1);
-        const tmb = tsize ? (tsize / 1048576).toFixed(1) : "?";
+        const tmb = (tsize / 1048576).toFixed(1);
+
         ltxt.textContent = `Downloading filesystem... (${cmb}MB/${tmb}MB)`;
-        lbar.style.width = Math.round((rsize / tsize) * 20) + "%";
+        lbar.style.width = Math.min(74, Math.round((rsize / tsize) * 74)) + "%";
       }
+
       const osfs = new Blob(ch);
       os.fs.instance = await osfs.arrayBuffer();
+
       await window.db.set("osfs2", os.fs.instance);
-      os.fs.size = Math.round( os.fs.instance.byteLength / 1048576 );
+
+      os.fs.size = Math.round(os.fs.instance.byteLength / 1048576);
     } catch (osfse) {
       ltxt.style.color = "red";
       ltxt.textContent = "Failed to load filesystem, please try again later :(";
       os.err = true;
-      console.log(osfse);
+      console.error(osfse);
     }
   } else {
-    os.fs.size = Math.round(os.fs.instance.byteLength / 1024 / 1024);
-    lbar.style.width = "20%";
+    os.fs.size = Math.round(os.fs.instance.byteLength / 1048576);
+    lbar.style.width = "74%";
+  }
+
+  if (os.err) return;
+
+  if (!os.initrd.instance) {
+    ltxt.textContent = "Loading initrd...";
+
+    try {
+      const res = await fetch(
+        "https://api.disgustalt.qzz.io/veryos/file/initramfs-lts"
+      );
+
+      if (!res.ok) {
+        ltxt.style.color = "red";
+        ltxt.textContent = "Failed to load initrd, please try again later :(";
+        console.error(res.status);
+        os.err = true;
+        return;
+      }
+
+      const tsize = Number(res.headers.get("Content-Length")) || 0;
+      const ch = [];
+      const rd = res.body.getReader();
+      let rsize = 0;
+
+      while (true) {
+        const { done, value } = await rd.read();
+        if (done) break;
+
+        ch.push(value);
+        rsize += value.byteLength;
+
+        const tmb = tsize
+          ? (tsize / 1048576).toFixed(1)
+          : "?";
+        const cmb = (rsize / 1048576).toFixed(1);
+        const progress = tsize ? rsize / tsize : 0;
+
+        ltxt.textContent = `Downloading initrd... (${cmb}MB/${tmb}MB)`;
+        lbar.style.width = Math.min(90, Math.round(progress * 16 + 74)) + "%";
+      }
+
+      const osinitrd = new Blob(ch);
+      os.initrd.instance = await osinitrd.arrayBuffer();
+
+      await window.db.set("osinitrd", os.initrd.instance);
+    } catch (osinitrde) {
+      ltxt.style.color = "red";
+      ltxt.textContent = "Failed to load initrd, please try again later :(";
+      console.error(osinitrde);
+      os.err = true;
+    }
+  } else {
+    lbar.style.width = "90%";
   }
 
   if (os.err) return;
 
   if (!os.wasm.instance) {
     ltxt.textContent = "Loading v86 wasm file...";
+
     try {
-      const res = await fetch("https://api.disgustalt.qzz.io/veryos/file/v86.wasm");
+      const res = await fetch(
+        "https://api.disgustalt.qzz.io/veryos/file/v86.wasm"
+      );
+
       if (!res.ok) {
         ltxt.style.color = "red";
         ltxt.textContent = "Failed to load v86 wasm file, please try again later :(";
@@ -97,7 +174,7 @@ async function initOS() {
         return;
       }
 
-      const tsize = Number(res?.headers?.get("Content-Length")) || 0;
+      const tsize = Number(res.headers.get("Content-Length")) || 0;
       const ch = [];
       const rd = res.body.getReader();
       let rsize = 0;
@@ -108,29 +185,41 @@ async function initOS() {
 
         ch.push(value);
         rsize += value.byteLength;
-        const tmb = (tsize / 1048576).toFixed(1);
+
+        const tmb = tsize
+          ? (tsize / 1048576).toFixed(1)
+          : "?";
         const cmb = (rsize / 1048576).toFixed(1);
+        const progress = tsize ? rsize / tsize : 0;
+
         ltxt.textContent = `Downloading v86 wasm file... (${cmb}MB/${tmb}MB)`;
-        lbar.style.width = Math.round((rsize / tsize) * 20 + 20) + "%";
+        lbar.style.width = Math.min(90.8, progress * 0.8 + 90) + "%";
       }
 
       const oswasm = new Blob(ch);
       os.wasm.instance = await oswasm.arrayBuffer();
+
       await window.db.set("oswasm", os.wasm.instance);
     } catch (oswasme) {
       ltxt.style.color = "red";
-      ltxt.textContent = "Failed to load v86 wasm file, please try again later :c"
-      console.log(oswasme);
+      ltxt.textContent = "Failed to load v86 wasm file, please try again later :(";
+      console.error(oswasme);
       os.err = true;
     }
-  } else lbar.style.width = "40%";
+  } else {
+    lbar.style.width = "90.8%";
+  }
 
   if (os.err) return;
 
   if (!os.bios.instance) {
     ltxt.textContent = "Loading bios...";
+
     try {
-      const res = await fetch("https://api.disgustalt.qzz.io/veryos/file/seabios.bin");
+      const res = await fetch(
+        "https://api.disgustalt.qzz.io/veryos/file/seabios.bin"
+      );
+
       if (!res.ok) {
         ltxt.style.color = "red";
         ltxt.textContent = "Failed to load bios, please try again later :(";
@@ -138,7 +227,7 @@ async function initOS() {
         return;
       }
 
-      const tsize = Number(res?.headers?.get("Content-Length")) || 0;
+      const tsize = Number(res.headers.get("Content-Length")) || 0;
       const ch = [];
       const rd = res.body.getReader();
       let rsize = 0;
@@ -149,29 +238,41 @@ async function initOS() {
 
         ch.push(value);
         rsize += value.byteLength;
-        const tmb = (tsize / 1048576).toFixed(1);
+
+        const tmb = tsize
+          ? (tsize / 1048576).toFixed(1)
+          : "?";
         const cmb = (rsize / 1048576).toFixed(1);
+        const progress = tsize ? rsize / tsize : 0;
+
         ltxt.textContent = `Downloading bios... (${cmb}MB/${tmb}MB)`;
-        lbar.style.width = Math.round((rsize / tsize) * 20 + 40) + "%";
+        lbar.style.width = Math.min(90.88, progress * 0.08 + 90.8) + "%";
       }
 
       const osbios = new Blob(ch);
       os.bios.instance = await osbios.arrayBuffer();
+
       await window.db.set("osbios", os.bios.instance);
     } catch (osbiose) {
       ltxt.style.color = "red";
-      ltxt.textContent = "Failed to load bios, please try again later :c"
-      console.log(osbiose);
+      ltxt.textContent = "Failed to load bios, please try again later :(";
+      console.error(osbiose);
       os.err = true;
     }
-  } else lbar.style.width = "60%";
+  } else {
+    lbar.style.width = "90.88%";
+  }
 
   if (os.err) return;
 
   if (!os.bios.vga.instance) {
     ltxt.textContent = "Loading vga bios...";
+
     try {
-      const res = await fetch("https://api.disgustalt.qzz.io/veryos/file/vgabios.bin");
+      const res = await fetch(
+        "https://api.disgustalt.qzz.io/veryos/file/vgabios.bin"
+      );
+
       if (!res.ok) {
         ltxt.style.color = "red";
         ltxt.textContent = "Failed to load vga bios, please try again later :(";
@@ -179,7 +280,7 @@ async function initOS() {
         return;
       }
 
-      const tsize = Number(res?.headers?.get("Content-Length")) || 0;
+      const tsize = Number(res.headers.get("Content-Length")) || 0;
       const ch = [];
       const rd = res.body.getReader();
       let rsize = 0;
@@ -190,46 +291,108 @@ async function initOS() {
 
         ch.push(value);
         rsize += value.byteLength;
-        const tmb = (tsize / 1048576).toFixed(1);
+
+        const tmb = tsize
+          ? (tsize / 1048576).toFixed(1)
+          : "?";
         const cmb = (rsize / 1048576).toFixed(1);
+        const progress = tsize ? rsize / tsize : 0;
+
         ltxt.textContent = `Downloading vga bios... (${cmb}MB/${tmb}MB)`;
-        lbar.style.width = Math.round((rsize / tsize) * 20 + 60) + "%";
+        lbar.style.width = Math.min(90.91, progress * 0.03 + 90.88) + "%";
       }
 
       const osvga = new Blob(ch);
       os.bios.vga.instance = await osvga.arrayBuffer();
+
       await window.db.set("osvga", os.bios.vga.instance);
     } catch (osvgae) {
       ltxt.style.color = "red";
-      ltxt.textContent = "Failed to load vga bios, please try again later :c"
-      console.log(osvgae);
+      ltxt.textContent = "Failed to load vga bios, please try again later :(";
+      console.error(osvgae);
       os.err = true;
     }
-  } else lbar.style.width = "80%";
+  } else {
+    lbar.style.width = "90.91%";
+  }
+
+  if (os.err) return;
+
+  if (!os.kernel.instance) {
+    ltxt.textContent = "Loading kernel...";
+
+    try {
+      const res = await fetch(
+        "https://api.disgustalt.qzz.io/veryos/file/vmlinuz-lts"
+      );
+
+      if (!res.ok) {
+        ltxt.style.color = "red";
+        ltxt.textContent = "Failed to load kernel, please try again later :(";
+        console.error(res.status);
+        os.err = true;
+        return;
+      }
+
+      const tsize = Number(res.headers.get("Content-Length")) || 0;
+      const ch = [];
+      const rd = res.body.getReader();
+      let rsize = 0;
+
+      while (true) {
+        const { done, value } = await rd.read();
+        if (done) break;
+
+        ch.push(value);
+        rsize += value.byteLength;
+
+        const tmb = tsize
+          ? (tsize / 1048576).toFixed(1)
+          : "?";
+        const cmb = (rsize / 1048576).toFixed(1);
+        const progress = tsize ? rsize / tsize : 0;
+
+        ltxt.textContent = `Downloading kernel... (${cmb}MB/${tmb}MB)`;
+        lbar.style.width = Math.min(99, progress * 8 + 91) + "%";
+      }
+
+      const oskernel = new Blob(ch);
+      os.kernel.instance = await oskernel.arrayBuffer();
+
+      await window.db.set("oskernel", os.kernel.instance);
+    } catch (oskernele) {
+      ltxt.style.color = "red";
+      ltxt.textContent = "Failed to load kernel, please try again later :(";
+      console.error(oskernele);
+      os.err = true;
+    }
+  } else {
+    lbar.style.width = "99%";
+  }
 
   if (os.err) return;
 
   try {
-    ltxt.textContent = "Starting OS..."
-    os.bios.url = URL.createObjectURL(new Blob([os.bios.instance]));
-    os.bios.vga.url = URL.createObjectURL(new Blob([os.bios.vga.instance]));
-    os.wasm.url = URL.createObjectURL(new Blob([os.wasm.instance], { type: "application/wasm" }));
-  
+    ltxt.textContent = "Starting OS...";
+    os.wasm.url = URL.createObjectURL(
+      new Blob([os.wasm.instance], { type: "application/wasm" })
+    );
+
     os.instance = new V86({
       wasm_path: os.wasm.url,
       memory_size: 512 * 1024 * 1024,
       vga_memory_size: 8 * 1024 * 1024,
       screen_container: document.getElementById("osscreen"),
-      bios: {
-        url: os.bios.url
+      kernel: {
+        buffer: os.kernel.instance
       },
-      vga_bios: {
-        url: os.bios.vga.url
+      initrd: {
+        buffer: os.initrd.instance
       },
       hda: {
         buffer: os.fs.instance
       },
-      cmdline: "rw root=/dev/sda rootfstype=ext4 console=ttyS0,115200 console=tty0",
+      cmdline: "rw root=/dev/sda rootfstype=ext4 console=tty0",
       autostart: true,
       serial1: {
         on_output: (b) => serialout(1, b)
@@ -243,32 +406,29 @@ async function initOS() {
     });
 
     os.instance.add_listener("emulator-ready", () => {
-      try {
-        lbar.style.width = "100%";
-        window.os.ready = true;
-        os.ready = true;
-        
-        setTimeout(() => {
-          lmain.style.display = "none";
-        }, 1000);
-        
-        setInterval(async () => {
-          if (os.instance) {
-            try {
-              await window.db.set("osfs", os.fs.instance);
-            } catch {}
+      window.os.ready = true;
+      os.ready = true;
+
+      setTimeout(() => {
+        lmain.style.display = "none";
+      }, 1000);
+
+      setInterval(async () => {
+        if (os.instance && os.fs.instance) {
+          try {
+            await window.db.set("osfs2", os.fs.instance);
+          } catch (e) {
+            console.error(e);
           }
-        }, 10000);
-      } catch (fsse) {
-        console.log(fsse);
-      }
+        }
+      }, 10000);
     });
   } catch (ose) {
     ltxt.style.color = "red";
     ltxt.textContent = "Couldn't start the OS, please try again later :((";
-    console.log(ose);
+    console.error(ose);
     os.ready = false;
-    os.err = true
+    os.err = true;
   }
 }
 
@@ -282,24 +442,25 @@ async function fsexpand(fssize = 256) {
     console.log("size too smol");
     return;
   }
-  
+
   const newfs = new ArrayBuffer(fssize * 1024 * 1024);
   const view = new Uint8Array(newfs);
   view.set(new Uint8Array(os.fs.instance));
-  
+
   os.fs.instance = newfs;
-  os.instance.hda.buffer = newfs; 
-  await window.db.set("osfs", os.fs.instance);
+  os.instance.hda.buffer = newfs;
+
+  await window.db.set("osfs2", os.fs.instance);
   os.fs.size = fssize;
 
   os.instance.serial1_send("resize2fs /dev/sda\n");
-};
+}
 
 function serialout(port, byte) {
   const sid = `serial${port}`;
-  
+
   if (os.serialSessions[sid]) {
-    if (typeof os.serialSessions[sid]?.onOutput === "function") {
+    if (typeof os.serialSessions[sid].onOutput === "function") {
       os.serialSessions[sid].onOutput(String.fromCharCode(byte));
     }
   }
@@ -307,23 +468,19 @@ function serialout(port, byte) {
 
 async function createTerminal() {
   await osready();
-  /*
-  let port = 3;
-  while (os.serialSessions[`serial${port}`]) {
-    port--;
-    if (port < 2) return null;
-  }
-  */
 
-  const sid = `serial1`;
+  const sid = "serial1";
+
   os.serialSessions[sid] = {
-    write: (data) => os.instance[`serial$1_send`](data),
+    write: (data) => os.instance.serial1_send(data),
     onOutput: null
   };
 
   return {
     write: (data) => os.serialSessions[sid].write(data),
-    setOnOutput: (cb) => { os.serialSessions[sid].onOutput = cb; },
+    setOnOutput: (cb) => {
+      os.serialSessions[sid].onOutput = cb;
+    },
     destroy: () => {
       os.serialSessions[sid].write("exit\n");
       delete os.serialSessions[sid];
@@ -350,17 +507,22 @@ function osready() {
 window.os = {
   ready: false,
   instance: null,
-  fs: { expand: fsexpand },
+  fs: {
+    expand: fsexpand
+  },
   onready: osready,
   createTerminal
 };
 
-initOS().catch(inite => {
-  os.err = true;
-  os.ready = false;
-  ltxt.textContent = "Initializing failed :c";
-  ltxt.style.color = "red";
-}).finally(() => {
-  window.os.instance = os.instance; 
-  window.os.ready = os.ready;
-});
+initOS()
+  .catch((inite) => {
+    os.err = true;
+    os.ready = false;
+    ltxt.textContent = "Initializing failed :c";
+    ltxt.style.color = "red";
+    console.error(inite);
+  })
+  .finally(() => {
+    window.os.instance = os.instance;
+    window.os.ready = os.ready;
+  });
