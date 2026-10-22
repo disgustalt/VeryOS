@@ -229,7 +229,7 @@ async function initOS() {
       hda: {
         buffer: os.fs.instance
       },
-      cmdline: "rw root=/dev/sda rootfstype=ext4 quiet",
+      cmdline: "rw root=/dev/sda rootfstype=ext4 console=ttyS0,115200 console=tty0",
       autostart: true,
       serial1: {
         on_output: (b) => serialout(1, b)
@@ -307,14 +307,15 @@ function serialout(port, byte) {
 
 async function createTerminal() {
   await osready();
-  
+  /*
   let port = 3;
   while (os.serialSessions[`serial${port}`]) {
     port--;
     if (port < 2) return null;
   }
+  */
 
-  const sid = `serial${port}`;
+  const sid = `serial1`;
   os.serialSessions[sid] = {
     write: (data) => os.instance[`serial${port}_send`](data),
     onOutput: null
