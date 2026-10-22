@@ -1,4 +1,4 @@
-import { Terminal } from "https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/+esm";
+import { WTerm } from "https://esm.sh/@wterm/dom?bundle";
 
 const op = document.apps.terminal.push;
 
@@ -21,25 +21,19 @@ async function terminalWin(id) {
   t.style.width = "100%";
   t.style.height = "100%";
   t.style.backgroundColor = "#000000";
+  t.style.color = "#ffffff";
   cont.appendChild(t);
 
+  let term;
   let s;
   let dest = false;
-
-  window.lib.init(() => {
-    const term = new window.hterm.Terminal();
-    term.getPrefs().set("background-color", "#000000");
-    term.getPrefs().set("foreground-color", "#ffffff");
-    term.getPrefs().set("cursor-color", "#ffffff");
-    term.decorate(t);
 
   function cl() {
     if (dest) return;
     
     el?.remove();
     dest = true;
-    term?.uninstallKeyboard();
-    term.getPrefs().resetAll();
+    term?.destroy();
     s?.destroy();
     
     const ind = document.apps["terminal"].indexOf(id);
@@ -54,19 +48,26 @@ async function terminalWin(id) {
     cl();
   });
 
-  term.onTerminalReady = async () => {
-    const io = term.io.push();
-
   try {
-    s = await window.os.createTerminal();
+    term = new WTerm(t, {
+      autoResize: true,
+      cursorBlinl: true,
+      onData(d) {
+        if (!dest && s) s?.write(d);
+      }
+    });
+
+    await term.init();
 
     if (dest) {
-      s?.destroy();
+      term?.destroy();
       return;
     }
 
+    s = await window.os.createTerminal();
+
     if (!s && !dest) {
-      io.writeUTF8("\r\nCouldn't get a terminal session. Maybe there's none available :c\r\nThis window will autoclose in 3seconds...");
+      term.write("\r\nCouldn't get a terminal session. Maybe there's none available :c\r\nThis window will autoclose in 3seconds...");
       setTimeout(() => {
         if (dest) return;
         cl();
@@ -74,21 +75,12 @@ async function terminalWin(id) {
       return;
     }
 
-    io.onVTKeystroke = (b) => {
-      if (!dest) s.write(b);
-    };
-
-    io.sendString = (b) => {
-      if (!dest) s.write(b);
-    };
-
-    s.setOnOutput(c => { if (!dest) io.writeUTF8(c) });
-    io.writeUTF8("\r\nTerminal ready!\r\nWelcome to the VeryOS terminal :D\r\n");
+    s.setOnOutput(c => { if (!dest) term.write(c) });
+    term.focus();
+    term.write("\r\nTerminal ready!\r\nWelcome to the VeryOS terminal :D\r\n");
   } catch (e) {
     console.error(e);
-    if (!dest && term ) io.writeUTF8("\r\nSomething went wrong :(\r\n");
+    if (!dest && term ) term.write("\r\nSomething went wrong :(\r\n");
     else if (el.isConnected) alert("Something went wrong ;c");
   }
-  }
-  });
 }
