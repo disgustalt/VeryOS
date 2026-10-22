@@ -1,5 +1,5 @@
 const scr = document.getElementById("osscreen");
-console.log(s);
+console.log(scr);
 const par = scr?.parentElement;
 const nxt = scr?.nextSibling;
 let win = false;
@@ -30,13 +30,13 @@ async function terminalWin(id) {
   
     cont.appendChild(scr);
 
-    scr?.hidden = false;
-    scr?.style?.display = "block";
-    scr?.style?.width = "100%";
-    scr?.style?.height = "100%";
-    scr?.querySelectorAll("canvas").forEach(canva => {
-      canva?.style.width = "100%";
-      canva?.style.height = "100%";
+    scr.hidden = false;
+    scr.style.display = "block";
+    scr.style.width = "100%";
+    scr.style.height = "100%";
+    scr?.querySelectorAll("canvas")?.forEach(canva => {
+      canva.style.width = "100%";
+      canva.style.height = "100%";
     });
 
     scr.tabIndex = 0;
@@ -58,8 +58,8 @@ async function terminalWin(id) {
         }
       }
 
-      scr?.style.display = "none";
-      scr?.hidden = true;
+      scr.style.display = "none";
+      scr.hidden = true;
     
       const ind = document.apps["terminal"].indexOf(id);
 
