@@ -45,7 +45,7 @@ async function initOS() {
     os.bios.instance = await window.db.get("osbios");
     os.bios.vga.instance = await window.db.get("osvga");
     os.initrd.instance = await window.db.get("osinitrd2");
-    os.kernel.instance = await window.db.get("oskernel2");
+    os.kernel.instance = await window.db.get("oskernel3");
   } catch (dbre) {
     os.err = true;
     ltxt.style.color = "red";
@@ -359,7 +359,7 @@ async function initOS() {
       const oskernel = new Blob(ch);
       os.kernel.instance = await oskernel.arrayBuffer();
 
-      await window.db.set("oskernel2", os.kernel.instance);
+      await window.db.set("oskernel3", os.kernel.instance);
     } catch (oskernele) {
       ltxt.style.color = "red";
       ltxt.textContent = "Failed to load kernel, please try again later :(";
