@@ -535,7 +535,7 @@ initOS()
 
 const kb = document.getElementById("kb");
 kb.addEventListener("input", () => {
-  if (kb.value) os.instance.send_keyboard_text(kb.value);
+  if (kb.value) os.instance.keyboard_send_text(kb.value);
   kb.value = "";
 });
 kb.addEventListener("keydown", (ev) => {
