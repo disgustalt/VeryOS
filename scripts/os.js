@@ -532,3 +532,13 @@ initOS()
     window.os.instance = os.instance;
     window.os.ready = os.ready;
   });
+
+const kb = document.getElementById("kb");
+kb.addEventListener("input", () => {
+  if (kb.value) os.instance.send_keyboard_text(kb.value);
+  kb.value = "";
+});
+kb.addEventListener("keydown", (ev) => {
+  if (ev.key === "Enter") os.instance.keyboard_send_scancodes([0x1c, 0x9c]);
+})
+kb.focus();
