@@ -323,7 +323,7 @@ async function initOS() {
 
     try {
       const res = await fetch(
-        "https://api.disgustalt.qzz.io/veryos/file/vmlinuz-lts"
+        "https://api.disgustalt.qzz.io/veryos/file/vmlinuz-lts?v=0"
       );
 
       if (!res.ok) {
