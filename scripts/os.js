@@ -373,6 +373,7 @@ async function initOS() {
   if (os.err) return;
 
   try {
+    console.log(os.fs.instance?.constructor?.type + " | " + os.fs.instance?.byteLength);
     ltxt.textContent = "Starting OS...";
     os.wasm.url = URL.createObjectURL(
       new Blob([os.wasm.instance], { type: "application/wasm" })
@@ -390,7 +391,7 @@ async function initOS() {
         buffer: os.initrd.instance
       },
       hda: {
-        buffer: os.fs.instance
+        buffer: new ArrayBuffer(128 * 1024 * 1024)
       },
       bios: {
         buffer: os.bios.instance
