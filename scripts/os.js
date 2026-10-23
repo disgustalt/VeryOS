@@ -383,7 +383,7 @@ async function initOS() {
       memory_size: 512 * 1024 * 1024,
       vga_memory_size: 8 * 1024 * 1024,
       screen_container: document.getElementById("osscreen"),
-      kernel: {
+      bzimage: {
         buffer: os.kernel.instance
       },
       initrd: {
