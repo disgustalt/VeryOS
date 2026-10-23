@@ -392,6 +392,12 @@ async function initOS() {
       hda: {
         buffer: os.fs.instance
       },
+      bios: {
+        buffer: os.bios.instance
+      },
+      vga_bios: {
+        buffer: os.bios.vga.instance
+      },
       cmdline: "rw root=/dev/sda rootfstype=ext4 console=tty0",
       autostart: true,
       serial1: {
