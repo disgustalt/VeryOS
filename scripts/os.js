@@ -412,6 +412,10 @@ async function initOS() {
       }
     });
 
+    os.instance.add_listener("serial0-output-byte", byte => {
+      console.log("[v86 :p]", byte, String.fromCharCode(byte));
+    });
+
     os.instance.add_listener("emulator-ready", () => {
       window.os.ready = true;
       os.ready = true;
