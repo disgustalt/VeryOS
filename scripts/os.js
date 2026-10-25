@@ -399,7 +399,7 @@ async function initOS() {
       vga_bios: {
         buffer: os.bios.vga.instance
       },
-      cmdline: "console=tty0 rdinit=/bin/sh",
+      cmdline: "console=tty0 rdinit=/bin/sh noapic",
       autostart: true,
       serial1: {
         on_output: (b) => serialout(1, b)
