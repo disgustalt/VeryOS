@@ -412,10 +412,40 @@ async function initOS() {
       }
     });
 
-    os.instance.add_listener("serial0-output-byte", byte => {
-      console.log("[v86 :p]", byte, String.fromCharCode(byte));
+    const d = document.createElement("pre");
+    Object.assign(d.style, {
+      position: "fixed",
+      inset: "10px",
+      zIndex: "999999",
+      overflow: "auto",
+      background: "#080d16",
+      color: "#b8f7c5",
+      padding: "12px",
+      font: "12px monospace",
+      whiteSpace: "pre-wrap",
+      overflowWrap: "anywhere",
+      display: "block"
     });
 
+    document.body.appendChild(d);
+
+    let sbuff = "";
+
+    os.instance.add_listener("serial0-output-byte", byte => {
+      sbuff += String.fromCharCode(byte);
+
+      if (byte === 10 || sbuff.length >= 512) {
+        d.textContent += sbuff;
+        sbuff = "";
+
+        if (d.textContent.length > 30000) {
+          d.textContent = d.textContent.slice(-20000);
+        }
+
+        d.scrollTop = d.scrollHeight;
+      }
+    });
+    
     os.instance.add_listener("emulator-ready", () => {
       window.os.ready = true;
       os.ready = true;
