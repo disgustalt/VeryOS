@@ -44,8 +44,8 @@ async function initOS() {
     os.wasm.instance = await window.db.get("oswasm");
     os.bios.instance = await window.db.get("osbios");
     os.bios.vga.instance = await window.db.get("osvga");
-    os.initrd.instance = await window.db.get("osinitrd2");
-    os.kernel.instance = await window.db.get("oskernel3");
+    os.initrd.instance = await window.db.get("osinitrd3");
+    os.kernel.instance = await window.db.get("oskernel4");
   } catch (dbre) {
     os.err = true;
     ltxt.style.color = "red";
@@ -146,7 +146,7 @@ async function initOS() {
       const osinitrd = new Blob(ch);
       os.initrd.instance = await osinitrd.arrayBuffer();
 
-      await window.db.set("osinitrd2", os.initrd.instance);
+      await window.db.set("osinitrd3", os.initrd.instance);
     } catch (osinitrde) {
       ltxt.style.color = "red";
       ltxt.textContent = "Failed to load initrd, please try again later :(";
@@ -359,7 +359,7 @@ async function initOS() {
       const oskernel = new Blob(ch);
       os.kernel.instance = await oskernel.arrayBuffer();
 
-      await window.db.set("oskernel3", os.kernel.instance);
+      await window.db.set("oskernel4", os.kernel.instance);
     } catch (oskernele) {
       ltxt.style.color = "red";
       ltxt.textContent = "Failed to load kernel, please try again later :(";
@@ -391,7 +391,7 @@ async function initOS() {
         buffer: os.initrd.instance
       },
       hda: {
-        buffer: new ArrayBuffer(128 * 1024 * 1024)
+        buffer: os.fs.instance
       },
       bios: {
         buffer: os.bios.instance
@@ -399,7 +399,7 @@ async function initOS() {
       vga_bios: {
         buffer: os.bios.vga.instance
       },
-      cmdline: "rw root=/dev/sda rootfstype=ext4 console=tty0",
+      cmdline: "console=tty0 rdinit=/bin/sh",
       autostart: true,
       serial1: {
         on_output: (b) => serialout(1, b)
