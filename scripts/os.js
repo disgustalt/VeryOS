@@ -44,7 +44,7 @@ async function initOS() {
     os.wasm.instance = await window.db.get("oswasm");
     os.bios.instance = await window.db.get("osbios");
     os.bios.vga.instance = await window.db.get("osvga");
-    os.initrd.instance = await window.db.get("osinitrd4");
+    os.initrd.instance = await window.db.get("osinitrd5");
     os.kernel.instance = await window.db.get("oskernel4");
   } catch (dbre) {
     os.err = true;
@@ -146,7 +146,7 @@ async function initOS() {
       const osinitrd = new Blob(ch);
       os.initrd.instance = await osinitrd.arrayBuffer();
 
-      await window.db.set("osinitrd4", os.initrd.instance);
+      await window.db.set("osinitrd5", os.initrd.instance);
     } catch (osinitrde) {
       ltxt.style.color = "red";
       ltxt.textContent = "Failed to load initrd, please try again later :(";
