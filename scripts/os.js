@@ -407,6 +407,8 @@ async function initOS() {
       }
     });
 
+    /*
+
     const d = document.createElement("pre");
     Object.assign(d.style, {
       position: "fixed",
@@ -440,6 +442,8 @@ async function initOS() {
         d.scrollTop = d.scrollHeight;
       }
     });
+
+    */
     
     os.instance.add_listener("emulator-ready", () => {
       window.os.ready = true;
