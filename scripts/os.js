@@ -19,7 +19,7 @@ const os = {
       instance: null
     }
   },
-  initrd: {
+  cdrom: {
     instance: null,
     url: null
   },
@@ -41,11 +41,11 @@ async function initOS() {
 
   try {
     os.fs.instance = await window.db.get("osfs2");
-    os.wasm.instance = await window.db.get("oswasm");
-    os.bios.instance = await window.db.get("osbios");
-    os.bios.vga.instance = await window.db.get("osvga");
-    os.initrd.instance = await window.db.get("osinitrd7");
-    os.kernel.instance = await window.db.get("oskernel4");
+    os.wasm.instance = await window.db.get("oswasm2");
+    os.bios.instance = await window.db.get("osbios2");
+    os.bios.vga.instance = await window.db.get("osvga2");
+    os.cdrom.instance = await window.db.get("oscdrom");
+    os.kernel.instance = await window.db.get("oskernel5");
   } catch (dbre) {
     os.err = true;
     ltxt.style.color = "red";
@@ -105,17 +105,17 @@ async function initOS() {
 
   if (os.err) return;
 
-  if (!os.initrd.instance) {
-    ltxt.textContent = "Loading initrd...";
+  if (!os.cdrom.instance) {
+    ltxt.textContent = "Loading cdrom...";
 
     try {
       const res = await fetch(
-        "https://api.disgustalt.qzz.io/veryos/file/initramfs-lts"
+        "https://api.disgustalt.qzz.io/veryos/file/TinyCore-11.0.iso"
       );
 
       if (!res.ok) {
         ltxt.style.color = "red";
-        ltxt.textContent = "Failed to load initrd, please try again later :(";
+        ltxt.textContent = "Failed to load cdrom, please try again later :(";
         console.error(res.status);
         os.err = true;
         return;
@@ -139,18 +139,18 @@ async function initOS() {
         const cmb = (rsize / 1048576).toFixed(1);
         const progress = tsize ? rsize / tsize : 0;
 
-        ltxt.textContent = `Downloading initrd... (${cmb}MB/${tmb}MB)`;
+        ltxt.textContent = `Downloading cdrom... (${cmb}MB/${tmb}MB)`;
         lbar.style.width = Math.min(90, Math.round(progress * 16 + 74)) + "%";
       }
 
-      const osinitrd = new Blob(ch);
-      os.initrd.instance = await osinitrd.arrayBuffer();
+      const oscdrom = new Blob(ch);
+      os.cdrom.instance = await oscdrom.arrayBuffer();
 
-      await window.db.set("osinitrd7", os.initrd.instance);
-    } catch (osinitrde) {
+      await window.db.set("oscdrom", os.cdrom.instance);
+    } catch (oscdrome) {
       ltxt.style.color = "red";
-      ltxt.textContent = "Failed to load initrd, please try again later :(";
-      console.error(osinitrde);
+      ltxt.textContent = "Failed to load cdrom, please try again later :(";
+      console.error(oscdrome);
       os.err = true;
     }
   } else {
@@ -199,7 +199,7 @@ async function initOS() {
       const oswasm = new Blob(ch);
       os.wasm.instance = await oswasm.arrayBuffer();
 
-      await window.db.set("oswasm", os.wasm.instance);
+      await window.db.set("oswasm2", os.wasm.instance);
     } catch (oswasme) {
       ltxt.style.color = "red";
       ltxt.textContent = "Failed to load v86 wasm file, please try again later :(";
@@ -252,7 +252,7 @@ async function initOS() {
       const osbios = new Blob(ch);
       os.bios.instance = await osbios.arrayBuffer();
 
-      await window.db.set("osbios", os.bios.instance);
+      await window.db.set("osbios2", os.bios.instance);
     } catch (osbiose) {
       ltxt.style.color = "red";
       ltxt.textContent = "Failed to load bios, please try again later :(";
@@ -305,7 +305,7 @@ async function initOS() {
       const osvga = new Blob(ch);
       os.bios.vga.instance = await osvga.arrayBuffer();
 
-      await window.db.set("osvga", os.bios.vga.instance);
+      await window.db.set("osvga2", os.bios.vga.instance);
     } catch (osvgae) {
       ltxt.style.color = "red";
       ltxt.textContent = "Failed to load vga bios, please try again later :(";
@@ -359,7 +359,7 @@ async function initOS() {
       const oskernel = new Blob(ch);
       os.kernel.instance = await oskernel.arrayBuffer();
 
-      await window.db.set("oskernel4", os.kernel.instance);
+      await window.db.set("oskernel5", os.kernel.instance);
     } catch (oskernele) {
       ltxt.style.color = "red";
       ltxt.textContent = "Failed to load kernel, please try again later :(";
@@ -384,22 +384,17 @@ async function initOS() {
       memory_size: 512 * 1024 * 1024,
       vga_memory_size: 8 * 1024 * 1024,
       screen_container: document.getElementById("osscreen"),
-      bzimage: {
-        buffer: os.kernel.instance
-      },
-      initrd: {
-        buffer: os.initrd.instance
-      },
-      hda: {
-        buffer: os.fs.instance
-      },
       bios: {
         buffer: os.bios.instance
       },
       vga_bios: {
         buffer: os.bios.vga.instance
       },
-      cmdline: "console=ttyS0,115200 console=tty0 initcall_debug ignore_loglevel loglevel=8 noapic",
+      cdrom: {
+        buffer: os.cdrom.instance,
+        async: true
+      },
+      boot_order: 0x213,
       autostart: true,
       serial1: {
         on_output: (b) => serialout(1, b)
