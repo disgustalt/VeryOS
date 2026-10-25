@@ -399,7 +399,7 @@ async function initOS() {
       vga_bios: {
         buffer: os.bios.vga.instance
       },
-      cmdline: "console=ttyS0,115200 console=tty0 init=/bin/sh initcall_debug ignore_loglevel loglevel=8 noapic",
+      cmdline: "console=ttyS0,115200 console=tty0 rdinit=/bin/sh init=/bin/sh initcall_debug ignore_loglevel loglevel=8 noapic",
       autostart: true,
       serial1: {
         on_output: (b) => serialout(1, b)
