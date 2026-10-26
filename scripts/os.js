@@ -397,6 +397,7 @@ async function initOS() {
       boot_order: 0x213,
       autostart: true,
       fastboot: true,
+      network_relay_url: "wss://relay.widgetry.org/",
       use_graphical_text: true,
       serial1: {
         on_output: (b) => serialout(1, b)
