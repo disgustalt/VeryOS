@@ -396,6 +396,8 @@ async function initOS() {
       },
       boot_order: 0x213,
       autostart: true,
+      fastboot: true,
+      use_graphical_text: true,
       serial1: {
         on_output: (b) => serialout(1, b)
       },
