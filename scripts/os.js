@@ -44,7 +44,7 @@ async function initOS() {
     os.wasm.instance = await window.db.get("oswasm2");
     os.bios.instance = await window.db.get("osbios2");
     os.bios.vga.instance = await window.db.get("osvga2");
-    os.cdrom.instance = await window.db.get("oscdrom0");
+    os.cdrom.instance = await window.db.get("oscdrom1");
     os.kernel.instance = await window.db.get("oskernel5");
   } catch (dbre) {
     os.err = true;
@@ -110,7 +110,7 @@ async function initOS() {
 
     try {
       const res = await fetch(
-        "https://api.disgustalt.qzz.io/veryos/file/TinyCore-11.0-fast.iso"
+        "https://api.disgustalt.qzz.io/veryos/file/TinyCore-11.0-core.iso"
       );
 
       if (!res.ok) {
@@ -146,7 +146,7 @@ async function initOS() {
       const oscdrom = new Blob(ch);
       os.cdrom.instance = await oscdrom.arrayBuffer();
 
-      await window.db.set("oscdrom0", os.cdrom.instance);
+      await window.db.set("oscdrom1", os.cdrom.instance);
     } catch (oscdrome) {
       ltxt.style.color = "red";
       ltxt.textContent = "Failed to load cdrom, please try again later :(";
