@@ -1,3 +1,4 @@
+import { Terminal } from "https://cdn.jsdelivr.net/npm/@xterm/xterm@5.5.0/+esm";
 
 let win = false;
 const op = document.apps.terminal.push;
