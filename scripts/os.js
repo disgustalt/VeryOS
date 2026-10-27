@@ -399,6 +399,9 @@ async function initOS() {
       fastboot: true,
       network_relay_url: "wss://relay.widgetry.org/",
       use_graphical_text: true,
+      serial0: {
+        on_output: (b) => serialout(0, b)
+      },
       serial1: {
         on_output: (b) => serialout(1, b)
       },
@@ -512,7 +515,7 @@ function serialout(port, byte) {
 async function createTerminal() {
   await osready();
 
-  const sid = "serial1";
+  const sid = "serial0";
 
   os.serialSessions[sid] = {
     write: (data) => os.instance.serial1_send(data),
