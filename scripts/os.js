@@ -413,50 +413,22 @@ async function initOS() {
       }
     });
 
-    /*
-
-    const d = document.createElement("pre");
-    Object.assign(d.style, {
-      position: "fixed",
-      inset: "10px",
-      zIndex: "999999",
-      overflow: "auto",
-      background: "#080d16",
-      color: "#b8f7c5",
-      padding: "12px",
-      font: "12px monospace",
-      whiteSpace: "pre-wrap",
-      overflowWrap: "anywhere",
-      display: "block"
-    });
-
-    document.body.appendChild(d);
-
-    let sbuff = "";
-
-    os.instance.add_listener("serial0-output-byte", byte => {
-      sbuff += String.fromCharCode(byte);
-
-      if (byte === 10 || sbuff.length >= 512) {
-        d.textContent += sbuff;
-        sbuff = "";
-
-        if (d.textContent.length > 30000) {
-          d.textContent = d.textContent.slice(-20000);
-        }
-
-        d.scrollTop = d.scrollHeight;
-      }
-    });
-
-    */
-    
     os.instance.add_listener("emulator-ready", () => {
       window.os.ready = true;
       os.ready = true;
+      const osscreen = document.getElementById("osscreen");
+      const disp = document.getElementById("loaddisp");
+      disp.appendChild(osscreen);
 
-      setTimeout(() => {
-        lmain.style.display = "none";
+      const txtch = setInterval(() => {
+        const vgatxt = osscreen?.textContent || osscreen?.innerText || osscreen?.innerHTML;
+        const readtxt = /core is distributed with absolutely no warranty/i.test(vgatxt);
+        if (readtxt) {
+          clearInterval(txtch);
+          setTimeout(() => {
+            lmain.style.display = "none";
+          }, 1000);
+        }
       }, 1000);
 
       setInterval(async () => {
@@ -588,13 +560,3 @@ initOS()
     window.os.instance = os.instance;
     window.os.ready = os.ready;
   });
-
-const kb = document.getElementById("kb");
-kb.addEventListener("input", () => {
-  if (kb.value) os.instance.keyboard_send_text(kb.value);
-  kb.value = "";
-});
-kb.addEventListener("keydown", (ev) => {
-  if (ev.key === "Enter") os.instance.keyboard_send_scancodes([0x1c, 0x9c]);
-})
-kb.focus();
