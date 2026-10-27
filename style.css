@@ -54,10 +54,12 @@ navbar {
   width: 100%;
   height: 100%;
   padding: 4px;
+  overflow: scroll;
 }
 
 .xterm-screen {
   width: 100%;
+  overflow: scroll;
 }
 
 desktop {
@@ -104,6 +106,12 @@ desktop {
         transition: width 0.3s ease;
         border-radius: 10px;
       }
+    }
+
+    #loaddisp {
+      width: 750px;
+      overflow: scroll;
+      height: 400px;
     }
   }
 }
