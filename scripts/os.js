@@ -518,7 +518,7 @@ async function createTerminal() {
   const sid = "serial0";
 
   os.serialSessions[sid] = {
-    write: (data) => os.instance.serial1_send(data),
+    write: (data) => os.instance.serial0_send(data),
     onOutput: null
   };
 
