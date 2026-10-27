@@ -418,6 +418,7 @@ async function initOS() {
       os.ready = true;
       const osscreen = document.getElementById("osscreen");
       const disp = document.getElementById("loaddisp");
+      osscreen.hidden = false;
       disp.appendChild(osscreen);
 
       const txtch = setInterval(() => {
