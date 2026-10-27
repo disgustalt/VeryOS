@@ -424,6 +424,7 @@ async function initOS() {
         const vgatxt = osscreen?.textContent || osscreen?.innerText || osscreen?.innerHTML;
         const readtxt = /core is distributed with absolutely no warranty/i.test(vgatxt);
         if (readtxt) {
+          console.log(readtxt);
           clearInterval(txtch);
           setTimeout(() => {
             lmain.style.display = "none";
