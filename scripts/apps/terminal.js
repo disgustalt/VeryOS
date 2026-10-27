@@ -1,78 +1,113 @@
-const scr = document.getElementById("osscreen");
-console.log(scr);
-const par = scr?.parentElement;
-const nxt = scr?.nextSibling;
+
 let win = false;
 const op = document.apps.terminal.push;
 
-document.apps.terminal.push = function(...p) {
+document.apps.terminal.push = function (...p) {
   const result = op.apply(this, p);
-  
+
   for (const id of p) {
-    if (typeof id === "string") terminalWin(id).catch(console.error);
+    if (typeof id === "string") {
+      terminalWin(id).catch(console.error);
+    }
   }
 
   return result;
 };
 
 async function terminalWin(id) {
+  const el = document.getElementById(id);
+  const cont = document.getElementById(`${id}-cont`);
+
+  if (!el || !cont) return;
+
+  if (win) {
+    el.remove();
+
+    const ind = document.apps.terminal.indexOf(id);
+    if (ind !== -1) document.apps.terminal.splice(ind, 1);
+
+    alert("Only one terminal is allowed at a time :)");
+    return;
+  }
+
+  win = true;
+
+  let s;
+  let term;
+  let input;
+  let dest = false;
+
   try {
-    const el = document.getElementById(id);
-    const cont = document.getElementById(`${id}-cont`);
-    if (!cont || !el || !scr) return;
-  
-    if (win) {
-      if (cont || el) el?.remove();
-      return alert("Only one terminal is allowed at a time :)");
-    }
+    cont.replaceChildren();
 
-    win = true;
-  
-    cont.appendChild(scr);
-
-    scr.hidden = false;
-    scr.style.display = "block";
-    scr.style.width = "100%";
-    scr.style.height = "100%";
-    scr?.querySelectorAll("canvas")?.forEach(canva => {
-      canva.style.width = "100%";
-      canva.style.height = "100%";
+    const t = document.createElement("div");
+    Object.assign(t.style, {
+      width: "100%",
+      height: "100%",
+      minHeight: "0",
+      overflow: "hidden"
     });
 
-    scr.tabIndex = 0;
-    scr?.focus();
+    cont.appendChild(t);
 
-    let dest = false;
+    term = new Terminal({
+      cursorBlink: true,
+      convertEol: true,
+      fontFamily: "monospace",
+      fontSize: 14,
+      theme: {
+        background: "#080d16",
+        foreground: "#b8f7c5",
+        cursor: "#b8f7c5",
+        selectionBackground: "#294b3b"
+      }
+    });
+
+    term.open(t);
+    term.focus();
+
+    s = await window.os.createTerminal();
+
+    if (dest || !el.isConnected) {
+      s.destroy();
+      term.dispose();
+      return;
+    }
+
+    s.setOnOutput(data => {
+      if (!dest) term.write(data);
+    });
+
+    input = term.onData(data => {
+      if (!dest) s.write(data);
+    });
+
+    const close = el.querySelector(".nav .close");
 
     function cl() {
       if (dest) return;
-      
-      el?.remove();
       dest = true;
+
+      input?.dispose();
+      s?.destroy();
+      term?.dispose();
+
+      el.remove();
+
+      const ind = document.apps.terminal.indexOf(id);
+      if (ind !== -1) document.apps.terminal.splice(ind, 1);
+
       win = false;
-      if (par) {
-        if (nxt?.parentNode === par) {
-          par?.insertBefore(scr, nxt);
-        } else {
-          par?.appendChild(scr);
-        }
-      }
-
-      scr.style.display = "none";
-      scr.hidden = true;
-    
-      const ind = document.apps["terminal"].indexOf(id);
-
-      if (ind !== -1) {
-        document.apps["terminal"].splice(ind, 1);
-      }
     }
 
-    const close = document.querySelector(`#${id} .nav .close`);
-    close?.addEventListener("click", () => {
-      cl();
-    });
+    close?.addEventListener("click", cl);
   } catch (e) {
-    console.error(e);
+    dest = true;
+    input?.dispose();
+    s?.destroy();
+    term?.dispose();
+    el.remove();
+    win = false;
+    throw e;
   }
 }
