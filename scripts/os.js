@@ -515,10 +515,10 @@ function serialout(port, byte) {
 async function createTerminal() {
   await osready();
 
-  const sid = "serial0";
+  const sid = "serial1";
 
   os.serialSessions[sid] = {
-    write: (data) => os.instance.serial0_send(data),
+    write: (data) => os.instance.serial1_send(data),
     onOutput: null
   };
 
