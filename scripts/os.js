@@ -515,23 +515,39 @@ function serialout(port, byte) {
 async function createTerminal() {
   await osready();
 
-  const sid = "serial1";
+  const b = os.instance?.bus || os.instance?.s;
 
-  os.serialSessions[sid] = {
-    write: (data) => os.instance.serial1_send(data),
-    onOutput: null
-  };
+  if (!b) throw new Error("event bus unavailable");
+
+  let onout = null;
+  let dest = false;
+  const enc = new TextEncoder();
+
+  const h = (byte) => {
+    if (dest || !onout) return;
+    onout(String.fromCharCode(byte));
+  }
+
+  b.register("serial0-output-byte", h);
 
   return {
-    write: (data) => os.serialSessions[sid].write(data),
-    setOnOutput: (cb) => {
-      os.serialSessions[sid].onOutput = cb;
+    write(d) {
+      if (dest) return;
+
+      for (const byte of enc.encode(d)) {
+        b.send("serial0-input", byte);
+      }
     },
-    destroy: () => {
-      os.serialSessions[sid].write("exit\n");
-      delete os.serialSessions[sid];
+    setOnOutput(cb) {
+      onout = cb;
+    },
+    destroy() {
+      if (dest) return;
+      dest = true;
+      b.unregister("serial0-output-byte", h);
+      onout = null;
     }
-  };
+  }
 }
 
 function osready() {
