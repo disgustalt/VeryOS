@@ -54,6 +54,8 @@ async function terminalWin(id) {
     term = new Terminal({
       cursorBlink: true,
       convertEol: true,
+      scrollOnUserInput: true,
+      scrollback: 5000,
       fontFamily: "monospace",
       fontSize: 14,
       theme: {
@@ -76,7 +78,9 @@ async function terminalWin(id) {
     }
 
     s.setOnOutput(data => {
-      if (!dest) term.write(data);
+      if (!dest) term.write(data, () => {
+        term.scrollToBottom();
+      });
     });
 
     input = term.onData(data => {
