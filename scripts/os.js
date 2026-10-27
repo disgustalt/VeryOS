@@ -394,6 +394,10 @@ async function initOS() {
         buffer: os.cdrom.instance,
         async: true
       },
+      hda: {
+        buffer: os.fs?.instance,
+        async: true
+      },
       boot_order: 0x213,
       autostart: true,
       fastboot: true,
