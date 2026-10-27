@@ -44,7 +44,7 @@ async function initOS() {
     os.wasm.instance = await window.db.get("oswasm2");
     os.bios.instance = await window.db.get("osbios2");
     os.bios.vga.instance = await window.db.get("osvga2");
-    os.cdrom.instance = await window.db.get("oscdrom3");
+    os.cdrom.instance = await window.db.get("oscdrom4");
     os.kernel.instance = await window.db.get("oskernel5");
   } catch (dbre) {
     os.err = true;
@@ -146,7 +146,7 @@ async function initOS() {
       const oscdrom = new Blob(ch);
       os.cdrom.instance = await oscdrom.arrayBuffer();
 
-      await window.db.set("oscdrom3", os.cdrom.instance);
+      await window.db.set("oscdrom4", os.cdrom.instance);
     } catch (oscdrome) {
       ltxt.style.color = "red";
       ltxt.textContent = "Failed to load cdrom, please try again later :(";
