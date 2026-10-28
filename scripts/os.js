@@ -218,7 +218,7 @@ async function initOS() {
         lbar.style.width = Math.min(94, Math.round((dl.downloaded / dl.total) * 1 + 93)) + "%";
       });
 
-      const osbios = new Blob(ch);
+      const osbios = new Blob(res.chunks);
       os.bios.instance = await osbios.arrayBuffer();
 
       await window.db.set("osbios2", os.bios.instance);
@@ -245,7 +245,7 @@ async function initOS() {
         lbar.style.width = Math.min(95, Math.round((dl.downloaded / dl.total) * 1 + 94)) + "%";
       });
 
-      const osvga = new Blob(ch);
+      const osvga = new Blob(res.chunks);
       os.bios.vga.instance = await osvga.arrayBuffer();
 
       await window.db.set("osvga2", os.bios.vga.instance);
@@ -272,7 +272,7 @@ async function initOS() {
         lbar.style.width = Math.min(99, Math.round((dl.downloaded / dl.total) * 4 + 95)) + "%";
       });
 
-      const oskernel = new Blob(ch);
+      const oskernel = new Blob(res.chunks);
       os.kernel.instance = await oskernel.arrayBuffer();
 
       await window.db.set("oskernel5", os.kernel.instance);
