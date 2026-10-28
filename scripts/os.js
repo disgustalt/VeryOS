@@ -132,7 +132,7 @@ async function initOS() {
         const cmb = (dl.downloaded / 1048576).toFixed(1);
         const tmb = (dl.total / 1048576).toFixed(1);
         ltxt.textContent = `Downloading filesystem... (${cmb}MB/${tmb}MB)`;
-        lbar.style.width = Math.min(74, Math.round((dl.downloaded / dl.total) * 74)) + "%";
+        lbar.style.width = Math.min(77, (dl.downloaded / dl.total) * 77) + "%";
       });
 
       const osfs = new Blob(res.chunks);
@@ -149,7 +149,7 @@ async function initOS() {
     }
   } else {
     os.fs.size = Math.round(os.fs.instance.byteLength / 1048576);
-    lbar.style.width = "74%";
+    lbar.style.width = "77%";
   }
 
   if (os.err) return;
@@ -158,41 +158,13 @@ async function initOS() {
     ltxt.textContent = "Loading cdrom...";
 
     try {
-      const res = await fetch(
-        "https://api.disgustalt.qzz.io/veryos/file/TinyCore-11.0-m.iso"
-      );
-
-      if (!res.ok) {
-        ltxt.style.color = "red";
-        ltxt.textContent = "Failed to load cdrom, please try again later :(";
-        console.error(res.status);
-        os.err = true;
-        return;
-      }
-
-      const tsize = Number(res.headers.get("Content-Length")) || 0;
-      const ch = [];
-      const rd = res.body.getReader();
-      let rsize = 0;
-
-      while (true) {
-        const { done, value } = await rd.read();
-        if (done) break;
-
-        ch.push(value);
-        rsize += value.byteLength;
-
-        const tmb = tsize
-          ? (tsize / 1048576).toFixed(1)
-          : "?";
-        const cmb = (rsize / 1048576).toFixed(1);
-        const progress = tsize ? rsize / tsize : 0;
-
+      const res = await download("https://api.disgustalt.qzz.io/veryos/file/TinyCore-11.0-m.iso", 134217728, (dl) => {
+        const cmb = (dl.downloaded / 1048576).toFixed(1);
+        const tmb = (dl.total / 1048576).toFixed(1);
         ltxt.textContent = `Downloading cdrom... (${cmb}MB/${tmb}MB)`;
-        lbar.style.width = Math.min(90, Math.round(progress * 16 + 74)) + "%";
-      }
-
-      const oscdrom = new Blob(ch);
+        lbar.style.width = Math.min(91, (dl.downloaded / dl.total) * 14 + 77) + "%";
+      });
+      const oscdrom = new Blob(res.chunks);
       os.cdrom.instance = await oscdrom.arrayBuffer();
 
       await window.db.set("oscdrom5", os.cdrom.instance);
@@ -203,7 +175,7 @@ async function initOS() {
       os.err = true;
     }
   } else {
-    lbar.style.width = "90%";
+    lbar.style.width = "91%";
   }
 
   if (os.err) return;
@@ -212,40 +184,14 @@ async function initOS() {
     ltxt.textContent = "Loading v86 wasm file...";
 
     try {
-      const res = await fetch(
-        "https://api.disgustalt.qzz.io/veryos/file/v86.wasm"
-      );
+      const res = await download("https://api.disgustalt.qzz.io/veryos/file/v86.wasm", 134217728, (dl) => {
+        const cmb = (dl.downloaded / 1048576).toFixed(1);
+        const tmb = (dl.total / 1048576).toFixed(1);
+        ltxt.textContent = `Downloading wasm file... (${cmb}MB/${tmb}MB)`;
+        lbar.style.width = Math.min(93, Math.round((dl.downloaded / dl.total) * 2 + 91)) + "%";
+      });
 
-      if (!res.ok) {
-        ltxt.style.color = "red";
-        ltxt.textContent = "Failed to load v86 wasm file, please try again later :(";
-        os.err = true;
-        return;
-      }
-
-      const tsize = Number(res.headers.get("Content-Length")) || 0;
-      const ch = [];
-      const rd = res.body.getReader();
-      let rsize = 0;
-
-      while (true) {
-        const { done, value } = await rd.read();
-        if (done) break;
-
-        ch.push(value);
-        rsize += value.byteLength;
-
-        const tmb = tsize
-          ? (tsize / 1048576).toFixed(1)
-          : "?";
-        const cmb = (rsize / 1048576).toFixed(1);
-        const progress = tsize ? rsize / tsize : 0;
-
-        ltxt.textContent = `Downloading v86 wasm file... (${cmb}MB/${tmb}MB)`;
-        lbar.style.width = Math.min(90.8, progress * 0.8 + 90) + "%";
-      }
-
-      const oswasm = new Blob(ch);
+      const oswasm = new Blob(res.chunks);
       os.wasm.instance = await oswasm.arrayBuffer();
 
       await window.db.set("oswasm2", os.wasm.instance);
@@ -256,7 +202,7 @@ async function initOS() {
       os.err = true;
     }
   } else {
-    lbar.style.width = "90.8%";
+    lbar.style.width = "93%";
   }
 
   if (os.err) return;
@@ -265,38 +211,12 @@ async function initOS() {
     ltxt.textContent = "Loading bios...";
 
     try {
-      const res = await fetch(
-        "https://api.disgustalt.qzz.io/veryos/file/seabios.bin"
-      );
-
-      if (!res.ok) {
-        ltxt.style.color = "red";
-        ltxt.textContent = "Failed to load bios, please try again later :(";
-        os.err = true;
-        return;
-      }
-
-      const tsize = Number(res.headers.get("Content-Length")) || 0;
-      const ch = [];
-      const rd = res.body.getReader();
-      let rsize = 0;
-
-      while (true) {
-        const { done, value } = await rd.read();
-        if (done) break;
-
-        ch.push(value);
-        rsize += value.byteLength;
-
-        const tmb = tsize
-          ? (tsize / 1048576).toFixed(1)
-          : "?";
-        const cmb = (rsize / 1048576).toFixed(1);
-        const progress = tsize ? rsize / tsize : 0;
-
+      const res = await download("https://api.disgustalt.qzz.io/veryos/file/seabios.bin", 134217728, (dl) => {
+        const cmb = (dl.downloaded / 1048576).toFixed(1);
+        const tmb = (dl.total / 1048576).toFixed(1);
         ltxt.textContent = `Downloading bios... (${cmb}MB/${tmb}MB)`;
-        lbar.style.width = Math.min(90.88, progress * 0.08 + 90.8) + "%";
-      }
+        lbar.style.width = Math.min(94, Math.round((dl.downloaded / dl.total) * 1 + 93)) + "%";
+      });
 
       const osbios = new Blob(ch);
       os.bios.instance = await osbios.arrayBuffer();
@@ -309,7 +229,7 @@ async function initOS() {
       os.err = true;
     }
   } else {
-    lbar.style.width = "90.88%";
+    lbar.style.width = "94%";
   }
 
   if (os.err) return;
@@ -318,38 +238,12 @@ async function initOS() {
     ltxt.textContent = "Loading vga bios...";
 
     try {
-      const res = await fetch(
-        "https://api.disgustalt.qzz.io/veryos/file/vgabios.bin"
-      );
-
-      if (!res.ok) {
-        ltxt.style.color = "red";
-        ltxt.textContent = "Failed to load vga bios, please try again later :(";
-        os.err = true;
-        return;
-      }
-
-      const tsize = Number(res.headers.get("Content-Length")) || 0;
-      const ch = [];
-      const rd = res.body.getReader();
-      let rsize = 0;
-
-      while (true) {
-        const { done, value } = await rd.read();
-        if (done) break;
-
-        ch.push(value);
-        rsize += value.byteLength;
-
-        const tmb = tsize
-          ? (tsize / 1048576).toFixed(1)
-          : "?";
-        const cmb = (rsize / 1048576).toFixed(1);
-        const progress = tsize ? rsize / tsize : 0;
-
+      const res = await download("https://api.disgustalt.qzz.io/veryos/file/vgabios.bin", 134217728, (dl) => {
+        const cmb = (dl.downloaded / 1048576).toFixed(1);
+        const tmb = (dl.total / 1048576).toFixed(1);
         ltxt.textContent = `Downloading vga bios... (${cmb}MB/${tmb}MB)`;
-        lbar.style.width = Math.min(90.91, progress * 0.03 + 90.88) + "%";
-      }
+        lbar.style.width = Math.min(95, Math.round((dl.downloaded / dl.total) * 1 + 94)) + "%";
+      });
 
       const osvga = new Blob(ch);
       os.bios.vga.instance = await osvga.arrayBuffer();
@@ -362,7 +256,7 @@ async function initOS() {
       os.err = true;
     }
   } else {
-    lbar.style.width = "90.91%";
+    lbar.style.width = "95%";
   }
 
   if (os.err) return;
@@ -371,39 +265,12 @@ async function initOS() {
     ltxt.textContent = "Loading kernel...";
 
     try {
-      const res = await fetch(
-        "https://api.disgustalt.qzz.io/veryos/file/vmlinuz-lts?v=0"
-      );
-
-      if (!res.ok) {
-        ltxt.style.color = "red";
-        ltxt.textContent = "Failed to load kernel, please try again later :(";
-        console.error(res.status);
-        os.err = true;
-        return;
-      }
-
-      const tsize = Number(res.headers.get("Content-Length")) || 0;
-      const ch = [];
-      const rd = res.body.getReader();
-      let rsize = 0;
-
-      while (true) {
-        const { done, value } = await rd.read();
-        if (done) break;
-
-        ch.push(value);
-        rsize += value.byteLength;
-
-        const tmb = tsize
-          ? (tsize / 1048576).toFixed(1)
-          : "?";
-        const cmb = (rsize / 1048576).toFixed(1);
-        const progress = tsize ? rsize / tsize : 0;
-
+      const res = await download("https://api.disgustalt.qzz.io/veryos/file/vmlinuz-lts?v=0", 134217728, (dl) => {
+        const cmb = (dl.downloaded / 1048576).toFixed(1);
+        const tmb = (dl.total / 1048576).toFixed(1);
         ltxt.textContent = `Downloading kernel... (${cmb}MB/${tmb}MB)`;
-        lbar.style.width = Math.min(99, progress * 8 + 91) + "%";
-      }
+        lbar.style.width = Math.min(99, Math.round((dl.downloaded / dl.total) * 4 + 95)) + "%";
+      });
 
       const oskernel = new Blob(ch);
       os.kernel.instance = await oskernel.arrayBuffer();
