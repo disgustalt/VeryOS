@@ -109,6 +109,7 @@ desktop {
     }
 
     #loaddisp {
+      margin-top: 25px;
       width: 750px;
       overflow: scroll;
       height: 400px;
