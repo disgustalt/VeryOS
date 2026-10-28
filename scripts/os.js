@@ -1,3 +1,5 @@
+import { default as cfg } from "/config.js";
+
 const os = {
   err: false,
   ready: false,
@@ -34,6 +36,73 @@ const lbar = document.getElementById("loadbar");
 const ltxt = document.getElementById("loadtxt");
 const lmain = document.getElementById("mainloader");
 
+async function download(url, ttl) {
+  const dl = {
+    downloaded: 0,
+    total: 0,
+    chunks: [],
+    done: false
+  };
+
+  const maxr = cfg.dl.retries.max;
+  let ret = 0;
+  let total = ttl || 0;
+
+  while (!total || dl.downloaded < total) {
+    let read;
+    try {
+      const res = await fetch(url, {
+        headers: {
+          Range: `bytes=${dl.downloaded}-`
+        }
+      });
+
+      if (!res.ok || res.status !== 206) throw new Error(`failed to dl ${url}: ${res.status}`);
+
+      const range = res.headers?.get("content-range");
+      const len = res.headers?.get("content-length");
+
+      if (range) {
+        const rm = range.match(/^bytes (\d+)-(\d+)\/(\d+)$/);
+        
+        if (!rm || Number(rm[1]) !== dl.downloaded) throw new Error(`error in dl: bad content range: ${range}`);
+
+        total = Number(rm[3]) || total;
+      } else if (!dl.downloaded) {
+        total = Number(res.headers?.get("content-length")) || total;
+      }
+
+      dl.total = total;
+      read = res.body?.getReader();
+
+      while (true) {
+        const { done, value } = await read?.read();
+        if (done) break;
+
+        dl.chunks.push(value);
+        dl.downloaded += value?.byteLength;
+      }
+
+      if (total && dl.downloaded < total) throw new Error(`dl ended before full download: ${dl.downloaded}/${total}`);
+
+      dl.done = true;
+      return dl;
+    } catch (dle) {
+      try {
+        await read?.cancel();
+      } catch {}
+
+      if (ret >= maxr) throw new Error(`dl failed after ${dl.downloaded}: ${dle.message}`);
+
+      ret++;
+      await new Promise(resolve => setTimeout(resolve, cfg.dl?.retries.delay(ret)));
+    }
+  }
+
+  dl.done = true;
+  return dl;
+}
+
 async function initOS() {
   ltxt.textContent = "Starting...";
 
@@ -58,35 +127,20 @@ async function initOS() {
     ltxt.textContent = "Loading filesystem...";
 
     try {
-      const res = await fetch(os.fs.url);
+      const res = await download(os.fs.url, 134217728);
+      let len;
 
-      if (!res.ok) {
-        ltxt.style.color = "red";
-        ltxt.textContent = "Failed to load filesystem, please try again later :(";
-        os.err = true;
-        return;
+      while (!res?.done) {
+        if (res?.chunks?.length > len) {
+          len = res.chunks?.length;
+          const cmb = (res.downloaded / 1048576).toFixed(1);
+          const tmb = (res.total / 1048576).toFixed(1);
+          ltxt.textContent = `Downloading filesystem... (${cmb}MB/${tmb}MB)`;
+          lbar.style.width = Math.min(74, Math.round((rsize / tsize) * 74)) + "%";
+        }
       }
 
-      const tsize = 134217728;
-      const rd = res.body.getReader();
-      const ch = [];
-      let rsize = 0;
-
-      while (true) {
-        const { done, value } = await rd.read();
-        if (done) break;
-
-        ch.push(value);
-        rsize += value.byteLength;
-
-        const cmb = (rsize / 1048576).toFixed(1);
-        const tmb = (tsize / 1048576).toFixed(1);
-
-        ltxt.textContent = `Downloading filesystem... (${cmb}MB/${tmb}MB)`;
-        lbar.style.width = Math.min(74, Math.round((rsize / tsize) * 74)) + "%";
-      }
-
-      const osfs = new Blob(ch);
+      const osfs = new Blob(res.chunks);
       os.fs.instance = await osfs.arrayBuffer();
 
       await window.db.set("osfs2", os.fs.instance);
