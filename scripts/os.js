@@ -158,7 +158,7 @@ async function initOS() {
     ltxt.textContent = "Loading cdrom...";
 
     try {
-      const res = await download("https://api.disgustalt.qzz.io/veryos/file/TinyCore-11.0-m.iso", 134217728, (dl) => {
+      const res = await download("https://api.disgustalt.qzz.io/veryos/file/TinyCore-11.0-m.iso", null, (dl) => {
         const cmb = (dl.downloaded / 1048576).toFixed(1);
         const tmb = (dl.total / 1048576).toFixed(1);
         ltxt.textContent = `Downloading cdrom... (${cmb}MB/${tmb}MB)`;
@@ -184,7 +184,7 @@ async function initOS() {
     ltxt.textContent = "Loading v86 wasm file...";
 
     try {
-      const res = await download("https://api.disgustalt.qzz.io/veryos/file/v86.wasm", 134217728, (dl) => {
+      const res = await download("https://api.disgustalt.qzz.io/veryos/file/v86.wasm", null, (dl) => {
         const cmb = (dl.downloaded / 1048576).toFixed(1);
         const tmb = (dl.total / 1048576).toFixed(1);
         ltxt.textContent = `Downloading wasm file... (${cmb}MB/${tmb}MB)`;
@@ -211,7 +211,7 @@ async function initOS() {
     ltxt.textContent = "Loading bios...";
 
     try {
-      const res = await download("https://api.disgustalt.qzz.io/veryos/file/seabios.bin", 134217728, (dl) => {
+      const res = await download("https://api.disgustalt.qzz.io/veryos/file/seabios.bin", null, (dl) => {
         const cmb = (dl.downloaded / 1048576).toFixed(1);
         const tmb = (dl.total / 1048576).toFixed(1);
         ltxt.textContent = `Downloading bios... (${cmb}MB/${tmb}MB)`;
@@ -238,7 +238,7 @@ async function initOS() {
     ltxt.textContent = "Loading vga bios...";
 
     try {
-      const res = await download("https://api.disgustalt.qzz.io/veryos/file/vgabios.bin", 134217728, (dl) => {
+      const res = await download("https://api.disgustalt.qzz.io/veryos/file/vgabios.bin", null, (dl) => {
         const cmb = (dl.downloaded / 1048576).toFixed(1);
         const tmb = (dl.total / 1048576).toFixed(1);
         ltxt.textContent = `Downloading vga bios... (${cmb}MB/${tmb}MB)`;
@@ -265,7 +265,7 @@ async function initOS() {
     ltxt.textContent = "Loading kernel...";
 
     try {
-      const res = await download("https://api.disgustalt.qzz.io/veryos/file/vmlinuz-lts?v=0", 134217728, (dl) => {
+      const res = await download("https://api.disgustalt.qzz.io/veryos/file/vmlinuz-lts", null, (dl) => {
         const cmb = (dl.downloaded / 1048576).toFixed(1);
         const tmb = (dl.total / 1048576).toFixed(1);
         ltxt.textContent = `Downloading kernel... (${cmb}MB/${tmb}MB)`;
