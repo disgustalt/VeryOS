@@ -36,7 +36,7 @@ const lbar = document.getElementById("loadbar");
 const ltxt = document.getElementById("loadtxt");
 const lmain = document.getElementById("mainloader");
 
-async function download(url, ttl) {
+async function download(url, ttl, prog) {
   const dl = {
     downloaded: 0,
     total: 0,
@@ -81,6 +81,7 @@ async function download(url, ttl) {
 
         dl.chunks.push(value);
         dl.downloaded += value?.byteLength;
+        prog?.(dl);
       }
 
       if (total && dl.downloaded < total) throw new Error(`dl ended before full download: ${dl.downloaded}/${total}`);
@@ -127,18 +128,12 @@ async function initOS() {
     ltxt.textContent = "Loading filesystem...";
 
     try {
-      const res = await download(os.fs.url, 134217728);
-      let len;
-
-      while (!res?.done) {
-        if (res?.chunks?.length > len) {
-          len = res.chunks?.length;
-          const cmb = (res.downloaded / 1048576).toFixed(1);
-          const tmb = (res.total / 1048576).toFixed(1);
-          ltxt.textContent = `Downloading filesystem... (${cmb}MB/${tmb}MB)`;
-          lbar.style.width = Math.min(74, Math.round((rsize / tsize) * 74)) + "%";
-        }
-      }
+      const res = await download(os.fs.url, 134217728, (dl) => {
+        const cmb = (dl.downloaded / 1048576).toFixed(1);
+        const tmb = (dl.total / 1048576).toFixed(1);
+        ltxt.textContent = `Downloading filesystem... (${cmb}MB/${tmb}MB)`;
+        lbar.style.width = Math.min(74, Math.round((dl.downloaded / dl.total) * 74)) + "%";
+      });
 
       const osfs = new Blob(res.chunks);
       os.fs.instance = await osfs.arrayBuffer();
