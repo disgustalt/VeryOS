@@ -348,8 +348,8 @@ async function initOS() {
           console.log(readtxt);
           clearInterval(txtch);
           setTimeout(() => {
-            console.log("hda:", os.instance.disk_images?.hda);
-            console.log("device:", typeof os.instance.disk_images?.hda?.get_buffer);
+            console.log("hda:", os.instance.v86?.disk_images?.hda);
+            console.log("device:", typeof os.instance.v86?.disk_images?.hda?.get_buffer);
             lmain.style.display = "none";
           }, 1000);
         }
