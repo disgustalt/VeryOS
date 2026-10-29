@@ -358,7 +358,8 @@ async function initOS() {
       setInterval(async () => {
         if (os.instance && os.fs.instance) {
           try {
-            await window.db.set("osfs2", os.fs.instance);
+            await window.db.set("osfs2", os.fs.instance.slice(0));
+            console.log("saved fs");
           } catch (e) {
             console.error(e);
           }
