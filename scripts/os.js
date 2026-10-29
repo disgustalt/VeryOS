@@ -114,7 +114,7 @@ async function initOS() {
     os.wasm.instance = await window.db.get("oswasm2");
     os.bios.instance = await window.db.get("osbios2");
     os.bios.vga.instance = await window.db.get("osvga2");
-    os.cdrom.instance = await window.db.get("oscdrom10");
+    os.cdrom.instance = await window.db.get("oscdrom11");
     os.kernel.instance = await window.db.get("oskernel5");
   } catch (dbre) {
     os.err = true;
@@ -158,7 +158,7 @@ async function initOS() {
     ltxt.textContent = "Loading cdrom...";
 
     try {
-      const res = await download("https://api.disgustalt.qzz.io/veryos/file/TinyCore-11.0-pfs.iso?v=3", null, (dl) => {
+      const res = await download("https://api.disgustalt.qzz.io/veryos/file/TinyCore-11.0-pfs.iso?v=5", null, (dl) => {
         const cmb = (dl.downloaded / 1048576).toFixed(1);
         const tmb = (dl.total / 1048576).toFixed(1);
         ltxt.textContent = `Downloading cdrom... (${cmb}MB/${tmb}MB)`;
@@ -167,7 +167,7 @@ async function initOS() {
       const oscdrom = new Blob(res.chunks);
       os.cdrom.instance = await oscdrom.arrayBuffer();
 
-      await window.db.set("oscdrom10", os.cdrom.instance);
+      await window.db.set("oscdrom11", os.cdrom.instance);
     } catch (oscdrome) {
       ltxt.style.color = "red";
       ltxt.textContent = "Failed to load cdrom, please try again later :(";
