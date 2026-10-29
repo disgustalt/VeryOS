@@ -334,6 +334,10 @@ async function initOS() {
     });
 
     os.instance.add_listener("emulator-ready", () => {
+      console.log("get_hda_image:", typeof os.instance.get_hda_image);
+      console.log("save_state:", typeof os.instance.save_state);
+      console.log("stop:", typeof os.instance.stop);
+      console.log("run:", typeof os.instance.run);
       window.os.ready = true;
       os.ready = true;
       const osscreen = document.getElementById("osscreen");
