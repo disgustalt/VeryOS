@@ -167,7 +167,7 @@ async function initOS() {
       const oscdrom = new Blob(res.chunks);
       os.cdrom.instance = await oscdrom.arrayBuffer();
 
-      await window.db.set("oscdrom5", os.cdrom.instance);
+      await window.db.set("oscdrom6", os.cdrom.instance);
     } catch (oscdrome) {
       ltxt.style.color = "red";
       ltxt.textContent = "Failed to load cdrom, please try again later :(";
