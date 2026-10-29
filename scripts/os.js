@@ -334,8 +334,6 @@ async function initOS() {
     });
 
     os.instance.add_listener("emulator-ready", () => {
-      console.log("hda:", os.instance.v86?.cpu?.devices?.hda);
-      console.log("device:", Object.keys(os.instance.v86?.cpu?.devices || {}));
       window.os.ready = true;
       os.ready = true;
       const osscreen = document.getElementById("osscreen");
@@ -350,6 +348,8 @@ async function initOS() {
           console.log(readtxt);
           clearInterval(txtch);
           setTimeout(() => {
+            console.log("hda:", os.instance.v86?.cpu?.devices?.hda);
+            console.log("device:", Object.keys(os.instance.v86?.cpu?.devices || {}));
             lmain.style.display = "none";
           }, 1000);
         }
