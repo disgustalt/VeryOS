@@ -15,7 +15,7 @@ async function filesWin(id) {
   
   for (const file of files) {
     if (file.name) {
-      fhtml += `<li data-id="${file.id}"><img src="./img/icons/filemanager.svg"><p class="fname">${file.name}</p><p style="color: rgba(255, 255, 255, 0.3);padding: 0 7px;">-</p><p class="fsize">${file.size}</p></li>`;
+      fhtml += `<li data-id="${file.id}"><img src="./img/icons/filemanager.svg"><p class="fname">${file.name + (file.mime === "text/plain" ? "txt" : "")}</p><p style="color: rgba(255, 255, 255, 0.3);padding: 0 7px;">-</p><p class="fsize">${file.size}</p></li>`;
     }
   }
   
