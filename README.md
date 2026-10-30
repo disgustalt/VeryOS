@@ -19,7 +19,7 @@ The 'filesystem' uses [idb-keyval](https://www.npmjs.com/package/idb-keyval) to 
 The file info is stored in the `files` key, and the file blobs themself are stored as `file:{id}`.
 It also uses an actual filesystem, which is available through the terminal app.
 
-The page runs TinyCore, which us accessible through the terminal app.
+The page runs TinyCore Linux, which us accessible through the terminal app.
 
 You can install packages using `tce-load` (32-bit packages)
 
@@ -44,8 +44,8 @@ That's all I think lol :p
 - The website now runs an actual OS.
 - A working terminal you can rum Linux commands in.
 - A persistent filesystem in the OS.
-- A text editor.
 - Better downloading.
+- Boot logs on loader page.
 
 
 ## Running it Yourself
