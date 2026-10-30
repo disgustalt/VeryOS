@@ -1,5 +1,5 @@
 
-import { createIcons } from "lucide";
+import { createIcons } from "https://esm.sh/lucide";
 
 const op = document.apps.txtedit.push;
 
