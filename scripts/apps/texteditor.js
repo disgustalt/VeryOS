@@ -1,10 +1,11 @@
-import * as lucide from "https://unpkg.com/lucide@latest"
+
+import * as lucide from "https://unpkg.com/lucide@latest";
 
 const op = document.apps.txtedit.push;
 
 document.apps.txtedit.push = function(...p) {
   op.apply(this, p);
-  
+
   for (const id of p) {
     if (typeof id === "string") txteditWin(id);
   }
@@ -16,18 +17,28 @@ async function txteditWin(id) {
   let finfo;
   let fc;
 
+  if (!cont) {
+    if (el) el.remove();
+    const ind = document.apps.txtedit.indexOf(id);
+    if (ind !== -1) document.apps.txtedit.splice(ind, 1);
+    return;
+  }
+
   cont.innerHTML = `<txtedit><div class='nav'><input id="${id}-name"><i id="${id}-save" data-lucide='save'></i></div><textarea id="${id}-txtedit"></textarea></txtedit>`;
-  
-  try { 
+
+  try {
     lucide.createIcons();
-    
+
     if (window.txtedit) {
       const files = await window.db.get("files");
       finfo = files ? files.find(f => f.id === window.txtedit) : null;
+
       if (finfo?.mime !== "text/plain") throw new Error("invalid file type");
+
       if (finfo) {
-        fc = await window.db.get(`file:${finfo?.id}`);
+        fc = await window.db.get(`file:${finfo.id}`);
       }
+
       window.txtedit = null;
     }
 
@@ -36,7 +47,8 @@ async function txteditWin(id) {
         id: crypto.randomUUID(),
         name: `file-${Date.now()}`,
         mime: "text/plain"
-      }
+      };
+
       fc = "";
     }
 
@@ -47,14 +59,17 @@ async function txteditWin(id) {
     if (save) save.addEventListener("click", async (ev) => {
       try {
         ev.preventDefault();
+
         finfo.name = nel.value;
+
         let files = await window.db.get("files");
         if (!files) files = [];
+
         const ind = files.findIndex(f => f.id === finfo.id);
-        
+
         if (ind === -1) files.push(finfo);
         else files[ind] = finfo;
-        
+
         await window.db.add(`file:${finfo.id}`, cel.value);
         await window.db.add("files", files);
       } catch (se) {
@@ -63,11 +78,28 @@ async function txteditWin(id) {
       }
     });
 
-    cel.value = fc;
+    cel.value = fc ?? "";
     nel.value = finfo.name;
+
+    if (el) {
+      const oldNav = el.querySelector(".nav");
+      const newNav = cont.querySelector("txtedit > .nav");
+
+      if (oldNav && newNav) {
+        newNav.querySelector("input").addEventListener("mousedown", e => e.stopPropagation());
+        newNav.querySelector("input").addEventListener("touchstart", e => e.stopPropagation());
+      }
+    }
+
   } catch (e) {
     console.log(e);
     alert("Something went wrong :(");
-    if (el) el.remove();
+
+    if (el) {
+      el.remove();
+
+      const ind = document.apps.txtedit.indexOf(id);
+      if (ind !== -1) document.apps.txtedit.splice(ind, 1);
+    }
   }
 }
