@@ -1,4 +1,3 @@
-
 import { createIcons } from "https://esm.sh/lucide";
 
 const op = document.apps.txtedit.push;
@@ -26,7 +25,7 @@ async function txteditWin(id) {
 
   cont.innerHTML = `
     <txtedit>
-      <div class="nav">
+      <div class="txtedit-nav">
         <input id="${id}-name">
         <i id="${id}-save" data-lucide="save"></i>
       </div>
