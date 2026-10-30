@@ -1,7 +1,8 @@
 document.apps = {
   files: [],
   camera: [],
-  terminal: []
+  terminal: [],
+  txtedit: []
 }
 
 const apps = {
@@ -19,6 +20,10 @@ const apps = {
     other: {
       noclose: true
     }
+  },
+  txtedit: {
+    name: "Text Editor",
+    icon: "./img/icons/txtedit.svg"
   }
 }
 
@@ -187,6 +192,34 @@ function createWindow(id, appid) {
 
       document.apps.terminal.push(id);
       break;
+
+    case "txtedit":
+      document.body.insertAdjacentHTML("beforeend", `
+        <div class="window" id="${id}">
+          <div class="nav">
+            <img src="/img/icons/filemanager.svg" class="icon">
+            <p class="name">
+              File Viewer
+            </p>
+            <div class="ctrls">
+              <div class="min">
+                -
+              </div>
+              <div class="full">
+                &#9633
+              </div>
+              <div class="close">
+                &times;
+              </div>
+            </div>
+          </div>
+          <div class="cont" id="${id}-cont">
+          </div>
+        </div>
+      `);
+
+      document.apps.txtedit.push(id);
+      break;
   }
   windowListener(id, appid);
 }
@@ -194,4 +227,5 @@ function createWindow(id, appid) {
 appListener("files");
 appListener("camera");
 appListener("terminal");
+appListener("txtedit");
 
