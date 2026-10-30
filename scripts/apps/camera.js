@@ -77,7 +77,7 @@ async function camWin(id) {
             const enc = new TextEncoder();
 
             for (const byte of enc.encode(byt)) {
-              b.send("serial1-input", byte);
+              b.send("serial0-input", byte);
             }
           };
 
