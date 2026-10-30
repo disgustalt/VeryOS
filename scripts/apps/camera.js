@@ -55,44 +55,30 @@ async function camWin(id) {
 
         ctx.drawImage(videl, 0, 0, c.width, c.height);
 
-        const img = await new Promise(resolve => c.toBlob(resolve, "image/jpeg"));
-
-        if (!img) throw new Error("no img blob")
+        const img = await new Promise(resolve => c.toBlob(resolve, "image/jpeg"));;
 
         const imgid = crypto.randomUUID();  
         const imgn = `img-${new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false }).format(new Date()).replace(/[^0-9]/g, '-')}.jpg`;
-
-        try {
-          const b64 = await new Promise((resolve, reject) => {
-            const rd = new FileReader();
-            rd.onload = () => resolve(rd.result.split(",")[1]);
-            rd.onerror = reject;
-            rd.readAsDataURL(img);
-          });
-
-          const b = window.os.instance?.bus || window.os.instance?.s;
-          if (!b) throw new Error("e bus not available :/");
-
-          const write = byt => {
-            const enc = new TextEncoder();
-
-            for (const byte of enc.encode(byt)) {
-              b.send("serial0-input", byte);
-            }
-          };
-
-          write("mkdir -p /home/Camera\n");
-          write(`base64 -d > '/home/Camera/${imgn}' <<'imgwc'\n`)
-
-          for (let i = 0; i < b64.length; i += 2048) {
-            write(b64.slice(i, i + 2048));
-          }
-
-          write("\nimgwc\n");
-        } catch (cape) {
-          console.log(cape);
-          alert("Uh oh, something went wrong! :(");
+        let size;
+        let sizev = "B";
+        
+        if (img.size > 1024) {
+          size = img.size / 1024;
         }
+
+        if (size >= 1024) {
+          size = size / 1024;
+          sizev = "Mb";
+        }
+
+        await window.db.add(`file:${imgid}`, img);  
+        let files = await window.db.get("files");  
+        if (!files) {  
+          files = [{ id: imgid, name: imgn, mime: "image/jpeg", size: size + sizev }];  
+        } else {  
+          files.push({ id: imgid, name: imgn, mime: "image/jpeg", size: size.toFixed(2) + sizev });  
+        }  
+        await window.db.add("files", files);  
       });
     }
 
