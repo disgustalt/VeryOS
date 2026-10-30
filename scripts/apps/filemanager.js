@@ -84,6 +84,7 @@ async function filesWin(id) {
         `);
 
         if (finfo.mime === "text/plain") {
+          window.txtedit = finfo.id;
           document.apps["txtedit"].push(winid);
           return;
         }
