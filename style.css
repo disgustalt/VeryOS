@@ -319,6 +319,81 @@ apps {
       }
     }
 
+    txtedit {
+      display: flex;
+      flex-direction: column;
+      white-space: normal;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+
+      .nav {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        cursor: pointer;
+        justify-content: flex-start;
+        background: rgba(255, 255, 255, 0.05);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        height: 35px;
+        box-sizing: border-box;
+        padding: 4px 8px;
+        
+        input {
+          flex: 1;
+          min-width: 0;
+          height: 25px;
+          padding: 0 6px;
+          border: 1px solid rgba(255, 255, 255, 0.15);
+          outline: none;
+          color: white;
+          border-radius: 5px;
+          box-sizing: border-box;
+          font-size: 12px;
+
+          &:focus {
+            border-color: rgba(86, 0, 224, 0.6);
+          }
+        }
+
+        .lucide-save {
+          height: 25px;
+          width: 25px;
+          stroke-width: 1;
+          transition: color 0.3s ease;
+
+          &:hover {
+            color: rgba(200, 200, 200, 0.9);
+          }
+
+          &:active {
+            color: rgba(86, 0, 224, 0.4);
+          }
+        }
+      }
+
+      textarea {
+        flex: 1;
+        width: 100%;
+        resize: none;
+        min-height: 0;
+        border: none;
+        outline: none;
+        padding: 10px;
+        font-size: 14px;
+        tab-size: 2;
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+        color: rgba(255, 255, 255, 0.8);
+        background: rgba(0, 0, 0, 0.4);
+        line-height: 1.5;
+        box-sizing: border-box;
+        white-space: pre;
+        overflow: auto;
+      }
+    }
+
     cam {
       display: block;
       position: relative;
