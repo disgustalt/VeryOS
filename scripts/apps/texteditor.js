@@ -1,5 +1,5 @@
 
-import * as lucide from "https://unpkg.com/lucide@latest";
+import { createIcons } from "lucide";
 
 const op = document.apps.txtedit.push;
 
@@ -27,7 +27,7 @@ async function txteditWin(id) {
   cont.innerHTML = `<txtedit><div class='nav'><input id="${id}-name"><i id="${id}-save" data-lucide='save'></i></div><textarea id="${id}-txtedit"></textarea></txtedit>`;
 
   try {
-    lucide.createIcons();
+    createIcons();
 
     if (window.txtedit) {
       const files = await window.db.get("files");
