@@ -20,8 +20,20 @@ The file info is stored in the `files` key, and the file blobs themself are stor
 It also uses an actual filesystem, which is available through the terminal app.
 
 The page runs TinyCore, which us accessible through the terminal app.
-You can install packages using `tce-load` (32-bit packages).
-You **cannot** install packages as root, so you'll have to switch to another user first. (eg: `su - tc`)
+
+You can install packages using `tce-load` (32-bit packages)
+
+Example:
+```bash
+tce-load -wi nano
+```
+
+You **cannot** install packages as root, so you'll have to switch to another user first.
+
+Switch to the tc user using:
+```bash
+su - tc
+```
 
 All packages are persisted, along with files in /home.
 
@@ -73,6 +85,16 @@ python -m http.server 8080
 ```
 
 You can edit [this file](/config.js) to configure some stuff like download retries.
+```javascript
+export default {
+  dl: { /* downloading related settings */
+    retries: {
+      max: 20, /* maximum retries before throwing an error */
+      delay: (r) => { return Math.min(r * 500, 5000) } /* gets a delay (between retries) that increases with retries (max is 5 secs) */
+    }
+  }
+};
+```
 
 The page should be live at `http://localhost:8080/index.html`!
 
