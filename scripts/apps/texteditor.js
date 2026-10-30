@@ -24,7 +24,15 @@ async function txteditWin(id) {
     return;
   }
 
-  cont.innerHTML = `<txtedit><div class='nav'><input id="${id}-name"><i id="${id}-save" data-lucide='save'></i></div><textarea id="${id}-txtedit"></textarea></txtedit>`;
+  cont.innerHTML = `
+    <txtedit>
+      <div class="nav">
+        <input id="${id}-name">
+        <i id="${id}-save" data-lucide="save"></i>
+      </div>
+      <textarea id="${id}-txtedit"></textarea>
+    </txtedit>
+  `;
 
   try {
     createIcons();
@@ -33,7 +41,9 @@ async function txteditWin(id) {
       const files = await window.db.get("files");
       finfo = files ? files.find(f => f.id === window.txtedit) : null;
 
-      if (finfo?.mime !== "text/plain") throw new Error("invalid file type");
+      if (finfo && finfo.mime !== "text/plain") {
+        throw new Error("invalid file type");
+      }
 
       if (finfo) {
         fc = await window.db.get(`file:${finfo.id}`);
@@ -56,15 +66,20 @@ async function txteditWin(id) {
     const save = document.getElementById(`${id}-save`);
     const nel = document.getElementById(`${id}-name`);
 
-    if (save) save.addEventListener("click", async (ev) => {
+    if (!cel || !save || !nel) {
+      throw new Error("Editor elements not found");
+    }
+
+    cel.value = fc ?? "";
+    nel.value = finfo.name;
+
+    save.addEventListener("click", async (ev) => {
       try {
         ev.preventDefault();
 
         finfo.name = nel.value;
 
-        let files = await window.db.get("files");
-        if (!files) files = [];
-
+        let files = await window.db.get("files") || [];
         const ind = files.findIndex(f => f.id === finfo.id);
 
         if (ind === -1) files.push(finfo);
@@ -77,19 +92,6 @@ async function txteditWin(id) {
         console.log(se);
       }
     });
-
-    cel.value = fc ?? "";
-    nel.value = finfo.name;
-
-    if (el) {
-      const oldNav = el.querySelector(".nav");
-      const newNav = cont.querySelector("txtedit > .nav");
-
-      if (oldNav && newNav) {
-        newNav.querySelector("input").addEventListener("mousedown", e => e.stopPropagation());
-        newNav.querySelector("input").addEventListener("touchstart", e => e.stopPropagation());
-      }
-    }
 
   } catch (e) {
     console.log(e);
